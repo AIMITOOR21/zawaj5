@@ -145,6 +145,36 @@ def inject_global_css():
     }
     [data-testid="stMetricValue"] { color: #5C2A3E !important; font-weight: 700 !important; }
     [data-testid="stMetricLabel"] { color: #8A6B7A !important; }
+
+    /* SIDEBAR NAV LINKS - force dark text */
+    [data-testid="stSidebarNav"] { background: transparent !important; }
+    [data-testid="stSidebarNav"] ul { padding: 0 !important; }
+    [data-testid="stSidebarNav"] li { list-style: none !important; }
+    [data-testid="stSidebarNav"] a,
+    [data-testid="stSidebarNav"] a span,
+    [data-testid="stSidebarNav"] a p,
+    [data-testid="stSidebarNav"] span {
+        color: #5C2A3E !important;
+        font-weight: 600 !important;
+        font-size: 0.88rem !important;
+        text-decoration: none !important;
+    }
+    [data-testid="stSidebarNavLink"] {
+        background: rgba(255,255,255,0.5) !important;
+        border-radius: 8px !important;
+        margin: 2px 0 !important;
+        padding: 6px 12px !important;
+    }
+    [data-testid="stSidebarNavLink"]:hover {
+        background: rgba(212,87,122,0.15) !important;
+    }
+    [data-testid="stSidebarNavLink"][aria-current="page"] {
+        background: rgba(184,48,80,0.12) !important;
+    }
+    /* Catch-all for any nav link text */
+    nav[data-testid="stSidebarNav"] * {
+        color: #5C2A3E !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
