@@ -226,6 +226,36 @@ def page_css():
         animation: fadeInUp 0.6s ease-out;
         box-shadow: 0 8px 28px rgba(212, 87, 122, 0.2);
     }
+
+    /* Universal visibility fixes */
+    .stButton > button {
+        background: #b83050 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 24px !important;
+        font-weight: 600 !important;
+    }
+    .streamlit-expanderHeader {
+        background: white !important;
+        color: #5C2A3E !important;
+        border-radius: 12px !important;
+        border: 1px solid #F8D7DE !important;
+    }
+    .streamlit-expanderContent {
+        background: white !important;
+        color: #3E3E3E !important;
+        border: 1px solid #F8D7DE !important;
+        border-top: none !important;
+    }
+    .stMarkdown p, .stMarkdown div, .stMarkdown span { color: #3E3E3E !important; }
+    .stRadio label { color: #5C2A3E !important; }
+    .stAlert p { color: #3E3E3E !important; }
+    .stTabs [data-baseweb="tab"] { color: #5C2A3E !important; background: white !important; }
+    .stTabs [aria-selected="true"] { background: #b83050 !important; color: white !important; }
+    .stSelectbox label { color: #5C2A3E !important; }
+    [data-testid="stExpander"] { background: white !important; border-radius: 12px !important; border: 1px solid #F8D7DE !important; }
+    [data-testid="stExpander"] summary { color: #5C2A3E !important; font-weight: 600 !important; }
+    [data-testid="stExpander"] p, [data-testid="stExpander"] div, [data-testid="stExpander"] span { color: #3E3E3E !important; }
     </style>
     """, unsafe_allow_html=True)
 
