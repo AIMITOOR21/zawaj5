@@ -298,7 +298,7 @@ def main():
                               else '<span class="scenario-badge-pending">Pending</span>')
                 with st.expander(
                     f"Scenario {scenario['id']} — {scenario['title']}",
-                    expanded=(not is_done and completed == i),
+                    expanded=(not is_done),
                 ):
                     st.markdown(
                         f"<div style='color:#D4577A; font-size:0.78rem; letter-spacing:2px; "
