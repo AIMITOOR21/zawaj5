@@ -405,8 +405,8 @@ footer{{padding:16px 36px;border-top:1px solid rgba(180,50,80,0.09);
   </div>
   <div class="cta">
     <div class="cta-btns">
-      <button class="btn" onclick="window.parent.location.href=window.parent.location.origin+'/1_Scenario_Assessment'">Begin Assessment <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-      <button class="btn2" onclick="window.parent.location.href=window.parent.location.origin+'/1_Scenario_Assessment'">How It Works</button>
+      <div class="btn" style="opacity:0.5;">Begin Assessment ↓</div>
+      <div class="btn2" style="opacity:0.5;">Scroll Down</div>
     </div>
     <div class="trust">Free<div class="trust-dot"></div>No account required<div class="trust-dot"></div>Results in 15 minutes</div>
   </div>
@@ -482,7 +482,12 @@ def main():
     render_sidebar()
 
     active_step = get_journey_step()
-    components.html(build_landing_html(active_step), height=960, scrolling=True)
+    components.html(build_landing_html(active_step), height=860, scrolling=True)
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("💖 Begin Assessment →", use_container_width=True, key="begin_btn"):
+            st.switch_page("pages/1_Scenario_Assessment.py")
 
 
 if __name__ == "__main__":
