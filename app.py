@@ -404,10 +404,6 @@ footer{{padding:16px 36px;border-top:1px solid rgba(180,50,80,0.09);
     </div>
   </div>
   <div class="cta">
-    <div class="cta-btns">
-      <div class="btn" style="opacity:0.5;">Begin Assessment ↓</div>
-      <div class="btn2" style="opacity:0.5;">Scroll Down</div>
-    </div>
     <div class="trust">Free<div class="trust-dot"></div>No account required<div class="trust-dot"></div>Results in 15 minutes</div>
   </div>
   <footer>
