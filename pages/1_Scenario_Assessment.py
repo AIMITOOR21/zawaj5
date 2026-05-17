@@ -270,9 +270,11 @@ def main():
     with pcol2:
         st.markdown(f"""
         <div style='text-align: center;'>
-            <span class='progress-pill'>
-                💕 {name_a}: <b>{len(responses_a)}/{total}</b> &nbsp;·&nbsp;
-                {name_b}: <b>{len(responses_b)}/{total}</b>
+            <span style='background:white; border-radius:30px; padding:0.6rem 1.3rem;
+                display:inline-flex; align-items:center; gap:0.6rem;
+                box-shadow:0 3px 10px rgba(212,87,122,0.1); border:1px solid #F8D7DE;
+                color:#5C2A3E; font-weight:600; font-size:1rem;'>
+                💕 {name_a}: {len(responses_a)}/{total} &nbsp;·&nbsp; {name_b}: {len(responses_b)}/{total}
             </span>
         </div>
         """, unsafe_allow_html=True)
@@ -373,7 +375,7 @@ def main():
                 st.session_state.person_a = extract_profile_from_responses(responses_a)
                 st.session_state.person_b = extract_profile_from_responses(responses_b)
                 st.session_state.assessment_complete = True
-                st.success("Profiles extracted. Navigate to the In-Laws Questionnaire.")
+                st.switch_page("pages/2_InLaws_Questionnaire.py")
     else:
         st.info(f"📝 {name_a}: {len(responses_a)}/{total}  ·  {name_b}: {len(responses_b)}/{total}")
 
@@ -407,8 +409,7 @@ def main():
             st.session_state.person_a = extract_profile_from_responses(sara_responses)
             st.session_state.person_b = extract_profile_from_responses(ahmed_responses)
             st.session_state.assessment_complete = True
-            st.success("Demo data loaded! Continue to the In-Laws Questionnaire.")
-            st.rerun()
+            st.switch_page("pages/2_InLaws_Questionnaire.py")
 
 
 main()
