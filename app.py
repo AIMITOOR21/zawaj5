@@ -132,6 +132,19 @@ def inject_global_css():
         font-family: 'Cormorant Garamond', serif !important;
         color: #5a0c1e !important;
     }
+
+    [data-testid="stSidebarNav"] a, [data-testid="stSidebarNavLink"] {
+        color: #5C2A3E !important;
+        font-weight: 500 !important;
+    }
+    [data-testid="stSidebarNav"] a:hover {
+        color: #D4577A !important;
+    }
+    section[data-testid="stSidebar"] a {
+        color: #5C2A3E !important;
+    }
+    [data-testid="stMetricValue"] { color: #5C2A3E !important; font-weight: 700 !important; }
+    [data-testid="stMetricLabel"] { color: #8A6B7A !important; }
     </style>
     """, unsafe_allow_html=True)
 
