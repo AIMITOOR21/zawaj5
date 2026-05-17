@@ -405,8 +405,8 @@ footer{{padding:16px 36px;border-top:1px solid rgba(180,50,80,0.09);
   </div>
   <div class="cta">
     <div class="cta-btns">
-      <button class="btn">Begin Assessment <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-      <button class="btn2">How It Works</button>
+      <button class="btn" onclick="window.parent.location.href=window.parent.location.origin+'/1_Scenario_Assessment'">Begin Assessment <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+      <button class="btn2" onclick="window.parent.location.href=window.parent.location.origin+'/1_Scenario_Assessment'">How It Works</button>
     </div>
     <div class="trust">Free<div class="trust-dot"></div>No account required<div class="trust-dot"></div>Results in 15 minutes</div>
   </div>
