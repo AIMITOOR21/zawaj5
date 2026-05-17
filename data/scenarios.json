@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "domain": "career",
+    "title": "Career After Marriage",
+    "scenario": "Your spouse has been offered a prestigious job that requires long working hours (60+ hours/week). This would significantly increase household income but leave little time for family activities.",
+    "choices": [
+      {"text": "Fully support their career - financial stability matters most", "value": "career_focused", "vector": {"individualism": 0.3, "tradition": 0.2, "ambition": 0.9}},
+      {"text": "Discuss a balanced schedule - career is important but so is family time", "value": "balanced", "vector": {"individualism": 0.5, "tradition": 0.5, "ambition": 0.6}},
+      {"text": "Suggest they find a less demanding role - family should come first", "value": "family_focused", "vector": {"individualism": 0.7, "tradition": 0.7, "ambition": 0.3}},
+      {"text": "Expect them to decline - a spouse's place is at home", "value": "no_work", "vector": {"individualism": 0.9, "tradition": 0.95, "ambition": 0.1}}
+    ]
+  },
+  {
+    "id": 2,
+    "domain": "career",
+    "title": "Spouse's Career Ambition",
+    "scenario": "Your partner wants to pursue higher education (PhD/MBA) abroad for 2 years after marriage. This means living apart or uprooting your life.",
+    "choices": [
+      {"text": "Move with them and support their dream fully", "value": "career_focused", "vector": {"individualism": 0.2, "tradition": 0.2, "ambition": 0.9}},
+      {"text": "Support them going, manage long-distance for 2 years", "value": "balanced", "vector": {"individualism": 0.5, "tradition": 0.4, "ambition": 0.7}},
+      {"text": "Ask them to find a local program instead", "value": "family_focused", "vector": {"individualism": 0.6, "tradition": 0.6, "ambition": 0.4}},
+      {"text": "Tell them education abroad is unnecessary after marriage", "value": "no_work", "vector": {"individualism": 0.8, "tradition": 0.9, "ambition": 0.1}}
+    ]
+  },
+  {
+    "id": 3,
+    "domain": "location",
+    "title": "Relocation Opportunity",
+    "scenario": "You receive an incredible job offer in Dubai that would double your income. Your spouse's entire family lives in your current city in Pakistan.",
+    "choices": [
+      {"text": "Accept it without hesitation - this is a life-changing opportunity", "value": "go_abroad", "vector": {"individualism": 0.9, "tradition": 0.1, "ambition": 0.9}},
+      {"text": "Discuss it together and try for a trial period of 1 year", "value": "willing_relocate", "vector": {"individualism": 0.6, "tradition": 0.4, "ambition": 0.7}},
+      {"text": "Consider it only if family can visit frequently", "value": "same_city", "vector": {"individualism": 0.4, "tradition": 0.6, "ambition": 0.5}},
+      {"text": "Decline - staying close to family is more important", "value": "stay_local", "vector": {"individualism": 0.1, "tradition": 0.9, "ambition": 0.2}}
+    ]
+  },
+  {
+    "id": 4,
+    "domain": "location",
+    "title": "Settling Down",
+    "scenario": "After marriage, you need to decide where to live. Your family is in Lahore, your spouse's family is in Karachi. Both families want you nearby.",
+    "choices": [
+      {"text": "Move to a third city for a fresh start together", "value": "go_abroad", "vector": {"individualism": 0.8, "tradition": 0.1, "ambition": 0.6}},
+      {"text": "Choose whichever city has better career opportunities", "value": "willing_relocate", "vector": {"individualism": 0.6, "tradition": 0.3, "ambition": 0.8}},
+      {"text": "Live near the husband's family - it's the cultural norm", "value": "same_city", "vector": {"individualism": 0.3, "tradition": 0.8, "ambition": 0.3}},
+      {"text": "Alternate between both cities seasonally", "value": "stay_local", "vector": {"individualism": 0.4, "tradition": 0.6, "ambition": 0.4}}
+    ]
+  },
+  {
+    "id": 5,
+    "domain": "family_structure",
+    "title": "The In-Law Question",
+    "scenario": "Your mother-in-law wants to move into your home permanently. Your spouse agrees, but you feel it will affect your privacy and independence.",
+    "choices": [
+      {"text": "Welcome her warmly - elders deserve our care and respect", "value": "joint_family", "vector": {"individualism": 0.1, "tradition": 0.95, "confrontation": 0.1}},
+      {"text": "Agree, but set clear boundaries about private space", "value": "joint_nearby", "vector": {"individualism": 0.4, "tradition": 0.7, "confrontation": 0.4}},
+      {"text": "Suggest she lives in a nearby apartment instead", "value": "nuclear_visits", "vector": {"individualism": 0.7, "tradition": 0.4, "confrontation": 0.6}},
+      {"text": "Firmly decline - your home, your rules", "value": "fully_nuclear", "vector": {"individualism": 0.95, "tradition": 0.1, "confrontation": 0.9}}
+    ]
+  },
+  {
+    "id": 6,
+    "domain": "family_structure",
+    "title": "Joint Family Dynamics",
+    "scenario": "You're living in a joint family. Your sister-in-law keeps interfering in your personal decisions - what you cook, how you dress, and how you spend money.",
+    "choices": [
+      {"text": "Accept it gracefully - this is how joint families work", "value": "joint_family", "vector": {"individualism": 0.1, "tradition": 0.9, "confrontation": 0.05}},
+      {"text": "Talk to your spouse privately and ask them to mediate", "value": "joint_nearby", "vector": {"individualism": 0.4, "tradition": 0.6, "confrontation": 0.4}},
+      {"text": "Politely but firmly tell her to respect boundaries", "value": "nuclear_visits", "vector": {"individualism": 0.7, "tradition": 0.3, "confrontation": 0.7}},
+      {"text": "Insist on moving out to your own place immediately", "value": "fully_nuclear", "vector": {"individualism": 0.95, "tradition": 0.05, "confrontation": 0.9}}
+    ]
+  },
+  {
+    "id": 7,
+    "domain": "children",
+    "title": "Starting a Family",
+    "scenario": "You've been married for 6 months. Your in-laws and parents are pressuring you both to have children immediately, but your spouse wants to wait 3-4 years to focus on career first.",
+    "choices": [
+      {"text": "Side with family - children are a blessing, why wait?", "value": "three_plus", "vector": {"individualism": 0.1, "tradition": 0.9, "family_orientation": 0.95}},
+      {"text": "Compromise - wait 1-2 years, then start trying", "value": "two_children", "vector": {"individualism": 0.4, "tradition": 0.5, "family_orientation": 0.7}},
+      {"text": "Support your spouse - career stability first, then children", "value": "one_child", "vector": {"individualism": 0.7, "tradition": 0.3, "family_orientation": 0.5}},
+      {"text": "You're not sure you want children at all", "value": "no_children", "vector": {"individualism": 0.9, "tradition": 0.05, "family_orientation": 0.1}}
+    ]
+  },
+  {
+    "id": 8,
+    "domain": "children",
+    "title": "Parenting Style",
+    "scenario": "You disagree with your spouse about raising children. They want a strict, traditional upbringing with emphasis on religion and discipline. You prefer a more liberal, open-minded approach.",
+    "choices": [
+      {"text": "Follow the traditional path - it worked for our parents", "value": "three_plus", "vector": {"individualism": 0.1, "tradition": 0.95, "family_orientation": 0.8}},
+      {"text": "Blend both - traditional values with modern freedoms", "value": "two_children", "vector": {"individualism": 0.4, "tradition": 0.6, "family_orientation": 0.7}},
+      {"text": "Lean towards the liberal approach with some structure", "value": "one_child", "vector": {"individualism": 0.7, "tradition": 0.3, "family_orientation": 0.5}},
+      {"text": "Let children decide their own path when they grow up", "value": "no_children", "vector": {"individualism": 0.9, "tradition": 0.1, "family_orientation": 0.3}}
+    ]
+  },
+  {
+    "id": 9,
+    "domain": "roles",
+    "title": "Household Responsibilities",
+    "scenario": "Both you and your spouse work full-time. After a long day, someone needs to cook dinner, clean, and help children with homework. Your spouse expects you to handle all domestic duties because 'that's the wife's job.'",
+    "choices": [
+      {"text": "Accept it - maintaining the home is indeed the wife's duty", "value": "traditional", "vector": {"individualism": 0.05, "tradition": 0.95, "gender_equality": 0.05}},
+      {"text": "Do most of it, but ask spouse to help on weekends", "value": "mostly_traditional", "vector": {"individualism": 0.3, "tradition": 0.7, "gender_equality": 0.3}},
+      {"text": "Split everything 50/50 - both work, both share duties", "value": "egalitarian", "vector": {"individualism": 0.7, "tradition": 0.2, "gender_equality": 0.9}},
+      {"text": "Hire help and neither of you should do domestic work", "value": "role_reversal", "vector": {"individualism": 0.8, "tradition": 0.1, "gender_equality": 0.7}}
+    ]
+  },
+  {
+    "id": 10,
+    "domain": "roles",
+    "title": "Decision Making Power",
+    "scenario": "A major family decision needs to be made - buying a new house. Your spouse makes the decision alone without consulting you, saying 'I'm the head of the family.'",
+    "choices": [
+      {"text": "Respect their decision - the husband leads the family", "value": "traditional", "vector": {"individualism": 0.05, "tradition": 0.9, "gender_equality": 0.05}},
+      {"text": "Accept it this time, but ask to be included next time", "value": "mostly_traditional", "vector": {"individualism": 0.3, "tradition": 0.6, "gender_equality": 0.4}},
+      {"text": "Insist that all major decisions must be made together", "value": "egalitarian", "vector": {"individualism": 0.7, "tradition": 0.2, "gender_equality": 0.85}},
+      {"text": "This is unacceptable - consider it a serious red flag", "value": "role_reversal", "vector": {"individualism": 0.9, "tradition": 0.05, "gender_equality": 0.95}}
+    ]
+  },
+  {
+    "id": 11,
+    "domain": "finances",
+    "title": "Money Management",
+    "scenario": "After marriage, you need to decide how to handle finances. Your spouse earns more than you and suggests keeping separate accounts with each paying different bills.",
+    "choices": [
+      {"text": "Keep everything separate - each person manages their own money", "value": "separate", "vector": {"individualism": 0.8, "tradition": 0.1, "trust": 0.4}},
+      {"text": "Have a joint account for shared expenses, keep personal savings separate", "value": "partial_pool", "vector": {"individualism": 0.5, "tradition": 0.4, "trust": 0.7}},
+      {"text": "Pool everything into one joint account - we're a team", "value": "full_pool", "vector": {"individualism": 0.2, "tradition": 0.6, "trust": 0.9}},
+      {"text": "One spouse should manage all finances for the household", "value": "spouse_manages", "vector": {"individualism": 0.1, "tradition": 0.85, "trust": 0.5}}
+    ]
+  },
+  {
+    "id": 12,
+    "domain": "finances",
+    "title": "Financial Support to Family",
+    "scenario": "Your spouse sends 30% of their monthly salary to their parents without discussing it with you. This is affecting your household budget and savings goals.",
+    "choices": [
+      {"text": "It's their duty to support parents - don't question it", "value": "spouse_manages", "vector": {"individualism": 0.1, "tradition": 0.9, "trust": 0.3}},
+      {"text": "Appreciate the gesture but ask to discuss the amount together", "value": "full_pool", "vector": {"individualism": 0.4, "tradition": 0.6, "trust": 0.7}},
+      {"text": "Set a fixed percentage that both agree on for family support", "value": "partial_pool", "vector": {"individualism": 0.6, "tradition": 0.4, "trust": 0.8}},
+      {"text": "Your household comes first - limit family transfers strictly", "value": "separate", "vector": {"individualism": 0.85, "tradition": 0.1, "trust": 0.5}}
+    ]
+  },
+  {
+    "id": 13,
+    "domain": "religion",
+    "title": "Religious Practice",
+    "scenario": "Your spouse expects you to pray five times daily, observe strict hijab/purdah, and attend religious gatherings every week. Your current practice is more moderate.",
+    "choices": [
+      {"text": "Embrace it fully - strengthen your faith together", "value": "very_strict", "vector": {"individualism": 0.05, "tradition": 0.95, "spirituality": 0.95}},
+      {"text": "Gradually increase your practice to meet halfway", "value": "moderate", "vector": {"individualism": 0.3, "tradition": 0.65, "spirituality": 0.7}},
+      {"text": "Maintain your current level - faith is personal", "value": "liberal", "vector": {"individualism": 0.7, "tradition": 0.3, "spirituality": 0.4}},
+      {"text": "Religion should not be imposed - everyone practices differently", "value": "secular", "vector": {"individualism": 0.9, "tradition": 0.05, "spirituality": 0.1}}
+    ]
+  },
+  {
+    "id": 14,
+    "domain": "religion",
+    "title": "Interfaith Social Circle",
+    "scenario": "Your spouse objects to you having close friends from other religions or attending multicultural events, saying it conflicts with Islamic values.",
+    "choices": [
+      {"text": "Agree and limit your social circle to same-faith people", "value": "very_strict", "vector": {"individualism": 0.05, "tradition": 0.9, "spirituality": 0.8}},
+      {"text": "Reduce frequency but maintain some diverse friendships", "value": "moderate", "vector": {"individualism": 0.4, "tradition": 0.6, "spirituality": 0.5}},
+      {"text": "Politely disagree - Islam encourages good relations with all", "value": "liberal", "vector": {"individualism": 0.7, "tradition": 0.3, "spirituality": 0.4}},
+      {"text": "This is controlling behavior - your friendships are your choice", "value": "secular", "vector": {"individualism": 0.9, "tradition": 0.05, "spirituality": 0.1}}
+    ]
+  },
+  {
+    "id": 15,
+    "domain": "family_structure",
+    "title": "Holiday Visits",
+    "scenario": "Eid is approaching. Your family expects you to spend the entire Eid with them (3 days). Your spouse's family expects the same. Both families are in different cities.",
+    "choices": [
+      {"text": "Go to husband's family - wife joins husband's household", "value": "joint_family", "vector": {"individualism": 0.1, "tradition": 0.9, "confrontation": 0.1}},
+      {"text": "Alternate - this Eid with one family, next with the other", "value": "joint_nearby", "vector": {"individualism": 0.4, "tradition": 0.5, "confrontation": 0.3}},
+      {"text": "Split the days - spend some with each family", "value": "nuclear_visits", "vector": {"individualism": 0.6, "tradition": 0.4, "confrontation": 0.5}},
+      {"text": "Celebrate at your own home and invite both families", "value": "fully_nuclear", "vector": {"individualism": 0.85, "tradition": 0.1, "confrontation": 0.7}}
+    ]
+  },
+  {
+    "id": 16,
+    "domain": "career",
+    "title": "Wife's Business Idea",
+    "scenario": "Your wife wants to start her own business. She has a solid plan and savings, but it means she'll be very busy for 1-2 years and might need financial support initially.",
+    "choices": [
+      {"text": "Fully support her - invest in her business together", "value": "career_focused", "vector": {"individualism": 0.3, "tradition": 0.1, "ambition": 0.95}},
+      {"text": "Support the idea but ask her to start small alongside homemaking", "value": "balanced", "vector": {"individualism": 0.5, "tradition": 0.5, "ambition": 0.6}},
+      {"text": "Suggest she waits until children are older", "value": "family_focused", "vector": {"individualism": 0.6, "tradition": 0.7, "ambition": 0.3}},
+      {"text": "Women running businesses creates family problems", "value": "no_work", "vector": {"individualism": 0.8, "tradition": 0.95, "ambition": 0.05}}
+    ]
+  },
+  {
+    "id": 17,
+    "domain": "roles",
+    "title": "Social Media Boundaries",
+    "scenario": "Your spouse posts family photos on social media and chats with friends of the opposite gender online. You feel uncomfortable about it.",
+    "choices": [
+      {"text": "Ask them to stop completely - it's inappropriate", "value": "traditional", "vector": {"individualism": 0.1, "tradition": 0.9, "gender_equality": 0.1}},
+      {"text": "Request they limit opposite-gender chats and check with you first", "value": "mostly_traditional", "vector": {"individualism": 0.3, "tradition": 0.65, "gender_equality": 0.3}},
+      {"text": "Trust them - everyone has friends of all genders", "value": "egalitarian", "vector": {"individualism": 0.7, "tradition": 0.2, "gender_equality": 0.8}},
+      {"text": "You both should have complete freedom online", "value": "role_reversal", "vector": {"individualism": 0.9, "tradition": 0.05, "gender_equality": 0.9}}
+    ]
+  },
+  {
+    "id": 18,
+    "domain": "finances",
+    "title": "Dowry Expectations",
+    "scenario": "Your in-laws hint that they expected a larger dowry (jahez) and occasionally make comments about what other families gave. This makes your spouse uncomfortable too.",
+    "choices": [
+      {"text": "Try to fulfill their expectations gradually to keep peace", "value": "spouse_manages", "vector": {"individualism": 0.1, "tradition": 0.9, "trust": 0.2}},
+      {"text": "Ask your spouse to address it with their family firmly", "value": "full_pool", "vector": {"individualism": 0.4, "tradition": 0.5, "trust": 0.6}},
+      {"text": "Both of you jointly tell them dowry culture is harmful", "value": "partial_pool", "vector": {"individualism": 0.7, "tradition": 0.2, "trust": 0.8}},
+      {"text": "This is a dealbreaker - consider it emotional abuse", "value": "separate", "vector": {"individualism": 0.9, "tradition": 0.05, "trust": 0.3}}
+    ]
+  },
+  {
+    "id": 19,
+    "domain": "children",
+    "title": "Child's Education",
+    "scenario": "You want to send your child to an English-medium international school. Your spouse prefers a local Urdu-medium madrasah for stronger religious grounding.",
+    "choices": [
+      {"text": "Madrasah education provides the best moral foundation", "value": "three_plus", "vector": {"individualism": 0.1, "tradition": 0.9, "family_orientation": 0.7}},
+      {"text": "Find a school that balances both - Islamic values with modern education", "value": "two_children", "vector": {"individualism": 0.4, "tradition": 0.6, "family_orientation": 0.7}},
+      {"text": "International school with supplementary Islamic classes", "value": "one_child", "vector": {"individualism": 0.7, "tradition": 0.3, "family_orientation": 0.6}},
+      {"text": "Best possible academic education regardless of religious content", "value": "no_children", "vector": {"individualism": 0.9, "tradition": 0.1, "family_orientation": 0.4}}
+    ]
+  },
+  {
+    "id": 20,
+    "domain": "location",
+    "title": "Returning Home",
+    "scenario": "You've been living abroad for 5 years. Your parents are aging and want you to return to Pakistan permanently. Your spouse loves their life abroad and doesn't want to go back.",
+    "choices": [
+      {"text": "Return immediately - parents need us more than anything", "value": "stay_local", "vector": {"individualism": 0.1, "tradition": 0.9, "ambition": 0.2}},
+      {"text": "Plan a return within 1-2 years after settling affairs", "value": "same_city", "vector": {"individualism": 0.3, "tradition": 0.6, "ambition": 0.4}},
+      {"text": "Visit frequently but continue living abroad", "value": "willing_relocate", "vector": {"individualism": 0.7, "tradition": 0.3, "ambition": 0.7}},
+      {"text": "Your life is abroad now - parents can visit or move with you", "value": "go_abroad", "vector": {"individualism": 0.9, "tradition": 0.05, "ambition": 0.8}}
+    ]
+  }
+]

@@ -1,0 +1,393 @@
+{
+  "mother_in_law": [
+    {
+      "id": "mil_1",
+      "topic": "Daughter-in-law's career",
+      "question": "Your son's wife wants to continue working full-time after marriage, including occasional late evenings for meetings. How do you feel?",
+      "choices": [
+        {"text": "Fully supportive — her career, her choice", "value": "fully_supportive", "score": 1.0},
+        {"text": "Supportive, as long as household is managed well", "value": "conditionally_supportive", "score": 0.65},
+        {"text": "Acceptable only if there are no children yet", "value": "until_children", "score": 0.35},
+        {"text": "I'd prefer she focuses on home and family", "value": "home_focused", "score": 0.1}
+      ]
+    },
+    {
+      "id": "mil_2",
+      "topic": "Visiting parents",
+      "question": "How often is it acceptable for your daughter-in-law to visit her parents?",
+      "choices": [
+        {"text": "Whenever she wants — her parents matter too", "value": "whenever", "score": 1.0},
+        {"text": "Every weekend or so is reasonable", "value": "weekly", "score": 0.75},
+        {"text": "Twice a month feels appropriate", "value": "biweekly", "score": 0.5},
+        {"text": "Major holidays and special occasions", "value": "occasional", "score": 0.2}
+      ]
+    },
+    {
+      "id": "mil_3",
+      "topic": "Living arrangement",
+      "question": "After marriage, what living arrangement do you prefer for your son and his wife?",
+      "choices": [
+        {"text": "They should have their own nuclear home", "value": "nuclear", "score": 1.0},
+        {"text": "Nearby but separate home, frequent visits", "value": "nearby", "score": 0.7},
+        {"text": "Live with us but with some privacy", "value": "joint_separate", "score": 0.35},
+        {"text": "Fully joint family — we all live together", "value": "joint_full", "score": 0.1}
+      ]
+    },
+    {
+      "id": "mil_4",
+      "topic": "Decision-making",
+      "question": "When it comes to major household decisions (finances, children's schooling), who should decide?",
+      "choices": [
+        {"text": "The couple alone — it's their life", "value": "couple_only", "score": 1.0},
+        {"text": "Couple consults elders but decides", "value": "couple_lead", "score": 0.7},
+        {"text": "Family discusses together, consensus", "value": "family_consensus", "score": 0.4},
+        {"text": "Elders guide — we have more experience", "value": "elders_guide", "score": 0.15}
+      ]
+    },
+    {
+      "id": "mil_5",
+      "topic": "Household responsibilities",
+      "question": "Who should handle most of the daily household responsibilities?",
+      "choices": [
+        {"text": "Shared equally between both spouses", "value": "shared", "score": 1.0},
+        {"text": "Mostly the wife, but husband helps", "value": "mostly_wife", "score": 0.55},
+        {"text": "Wife manages, husband provides", "value": "traditional", "score": 0.25},
+        {"text": "We all pitch in as one family", "value": "family_shared", "score": 0.7}
+      ]
+    },
+    {
+      "id": "mil_6",
+      "topic": "Children & parenting",
+      "question": "When grandchildren arrive, what role do you see yourself playing?",
+      "choices": [
+        {"text": "Supportive when asked, the parents decide", "value": "supportive", "score": 1.0},
+        {"text": "Actively help with daily care and decisions", "value": "active_help", "score": 0.6},
+        {"text": "Primary caregiver while parents work", "value": "primary", "score": 0.3},
+        {"text": "Guide parenting based on our traditions", "value": "traditional_guide", "score": 0.2}
+      ]
+    },
+    {
+      "id": "mil_7",
+      "topic": "Religious practice",
+      "question": "How important is it that your daughter-in-law follows the same level of religious practice as your family?",
+      "choices": [
+        {"text": "Not important — her faith is between her and Allah", "value": "personal", "score": 1.0},
+        {"text": "Important that she respects our family's practices", "value": "respectful", "score": 0.7},
+        {"text": "She should match our family's practice level", "value": "matching", "score": 0.35},
+        {"text": "Critical — must follow strictly as we do", "value": "strict", "score": 0.1}
+      ]
+    },
+    {
+      "id": "mil_8",
+      "topic": "Income earning more",
+      "question": "If your daughter-in-law earns more than your son, how do you feel?",
+      "choices": [
+        {"text": "That's wonderful — modern couples thrive together", "value": "supportive", "score": 1.0},
+        {"text": "Fine, as long as it doesn't strain the marriage", "value": "neutral", "score": 0.7},
+        {"text": "A bit uncomfortable — men should lead financially", "value": "uncomfortable", "score": 0.3},
+        {"text": "My son should always be the primary earner", "value": "opposed", "score": 0.1}
+      ]
+    }
+  ],
+
+  "father_in_law": [
+    {
+      "id": "fil_1",
+      "topic": "Financial decisions",
+      "question": "Who should manage the major financial decisions in your son's marriage?",
+      "choices": [
+        {"text": "The couple together as equal partners", "value": "equal", "score": 1.0},
+        {"text": "Primarily the husband, wife consulted", "value": "husband_lead", "score": 0.5},
+        {"text": "Husband decides, as the provider", "value": "traditional", "score": 0.2},
+        {"text": "Whoever is more financially savvy", "value": "merit", "score": 0.85}
+      ]
+    },
+    {
+      "id": "fil_2",
+      "topic": "Dowry & wedding expenses",
+      "question": "What is your view on dowry expectations?",
+      "choices": [
+        {"text": "Against it — simple nikkah is the Sunnah", "value": "against", "score": 1.0},
+        {"text": "Optional gift from bride's family, no pressure", "value": "optional", "score": 0.8},
+        {"text": "Customary items are reasonable", "value": "customary", "score": 0.4},
+        {"text": "Traditional expectations should be met", "value": "traditional", "score": 0.1}
+      ]
+    },
+    {
+      "id": "fil_3",
+      "topic": "Career of daughter-in-law",
+      "question": "How do you feel about your daughter-in-law working?",
+      "choices": [
+        {"text": "Absolutely supportive — she has her own identity", "value": "supportive", "score": 1.0},
+        {"text": "Fine as long as the home is not neglected", "value": "conditional", "score": 0.55},
+        {"text": "Only if financially necessary", "value": "reluctant", "score": 0.25},
+        {"text": "Prefer she doesn't — the home comes first", "value": "opposed", "score": 0.1}
+      ]
+    },
+    {
+      "id": "fil_4",
+      "topic": "Decision authority",
+      "question": "In matters affecting the whole family, who has the final say?",
+      "choices": [
+        {"text": "The couple in question decides for themselves", "value": "couple", "score": 1.0},
+        {"text": "Open discussion, consensus reached", "value": "consensus", "score": 0.75},
+        {"text": "I do, as the eldest male", "value": "patriarch", "score": 0.15},
+        {"text": "My wife and I together", "value": "parents", "score": 0.4}
+      ]
+    },
+    {
+      "id": "fil_5",
+      "topic": "Religious expectations",
+      "question": "What religious practice level do you expect in your son's new household?",
+      "choices": [
+        {"text": "Whatever they personally choose", "value": "personal", "score": 1.0},
+        {"text": "Respectful of family traditions", "value": "respectful", "score": 0.7},
+        {"text": "Match our household's practice", "value": "matching", "score": 0.4},
+        {"text": "Strictly observant, no compromises", "value": "strict", "score": 0.15}
+      ]
+    },
+    {
+      "id": "fil_6",
+      "topic": "Relocation for career",
+      "question": "If your son's wife gets a career opportunity in another city or abroad, would you support them moving?",
+      "choices": [
+        {"text": "Yes — they should follow opportunities", "value": "supportive", "score": 1.0},
+        {"text": "Yes if it's truly exceptional", "value": "conditional", "score": 0.65},
+        {"text": "Only if my son agrees, wife shouldn't push", "value": "husband_decides", "score": 0.25},
+        {"text": "No — family should stay near us", "value": "opposed", "score": 0.1}
+      ]
+    }
+  ],
+
+  "sister_in_law": [
+    {
+      "id": "sil_1",
+      "topic": "Bhabi's role",
+      "question": "How do you envision your relationship with your future sister-in-law?",
+      "choices": [
+        {"text": "Best friends — we'll be like sisters", "value": "close_friends", "score": 1.0},
+        {"text": "Respectful, warm, some distance", "value": "cordial", "score": 0.8},
+        {"text": "Polite but separate lives", "value": "polite", "score": 0.5},
+        {"text": "Depends entirely on her behavior", "value": "conditional", "score": 0.4}
+      ]
+    },
+    {
+      "id": "sil_2",
+      "topic": "Visits and time together",
+      "question": "How often do you expect to visit or interact with your brother's household after his marriage?",
+      "choices": [
+        {"text": "Regular visits, we're family", "value": "regular", "score": 0.9},
+        {"text": "Weekends and holidays mostly", "value": "periodic", "score": 1.0},
+        {"text": "Whenever invited, I give them space", "value": "space", "score": 0.85},
+        {"text": "Daily — we've always been close", "value": "daily", "score": 0.4}
+      ]
+    },
+    {
+      "id": "sil_3",
+      "topic": "Brother's loyalty",
+      "question": "After your brother marries, how should his priorities shift between you/family and his wife?",
+      "choices": [
+        {"text": "His wife becomes his primary priority", "value": "wife_first", "score": 1.0},
+        {"text": "Balance — neither side feels neglected", "value": "balanced", "score": 0.85},
+        {"text": "Family first, wife adjusts", "value": "family_first", "score": 0.25},
+        {"text": "I'd feel hurt if he chooses her over us", "value": "hurt", "score": 0.15}
+      ]
+    },
+    {
+      "id": "sil_4",
+      "topic": "Bhabi's career",
+      "question": "Do you think your brother's wife should work outside the home?",
+      "choices": [
+        {"text": "Absolutely — she has her own life", "value": "supportive", "score": 1.0},
+        {"text": "Fine if she wants to", "value": "neutral", "score": 0.8},
+        {"text": "Up to my brother to decide", "value": "brother_decides", "score": 0.35},
+        {"text": "Prefer she stays home", "value": "opposed", "score": 0.15}
+      ]
+    },
+    {
+      "id": "sil_5",
+      "topic": "Involvement in decisions",
+      "question": "How involved do you want to be in major decisions of your brother's new household?",
+      "choices": [
+        {"text": "Not at all — it's their marriage", "value": "hands_off", "score": 1.0},
+        {"text": "Available if they want my input", "value": "on_call", "score": 0.9},
+        {"text": "Actively consulted by my brother", "value": "consulted", "score": 0.5},
+        {"text": "I should have significant say — family matters", "value": "involved", "score": 0.2}
+      ]
+    }
+  ],
+
+  "boy_claims": [
+    {
+      "id": "bc_1",
+      "topic": "Mother's view on career",
+      "question": "How would your mother feel about your wife working full-time with late hours?",
+      "maps_to": "mil_1",
+      "choices": [
+        {"text": "Fully supportive", "value": "fully_supportive", "score": 1.0},
+        {"text": "Supportive with conditions", "value": "conditionally_supportive", "score": 0.65},
+        {"text": "Only until children", "value": "until_children", "score": 0.35},
+        {"text": "Prefer she stays home", "value": "home_focused", "score": 0.1}
+      ]
+    },
+    {
+      "id": "bc_2",
+      "topic": "Mother's view on visits",
+      "question": "How often do you think your mother is okay with your wife visiting her parents?",
+      "maps_to": "mil_2",
+      "choices": [
+        {"text": "Whenever she wants", "value": "whenever", "score": 1.0},
+        {"text": "Every weekend", "value": "weekly", "score": 0.75},
+        {"text": "Twice a month", "value": "biweekly", "score": 0.5},
+        {"text": "Major occasions only", "value": "occasional", "score": 0.2}
+      ]
+    },
+    {
+      "id": "bc_3",
+      "topic": "Family living arrangement",
+      "question": "What living arrangement does your family expect?",
+      "maps_to": "mil_3",
+      "choices": [
+        {"text": "Nuclear — our own home", "value": "nuclear", "score": 1.0},
+        {"text": "Nearby but separate", "value": "nearby", "score": 0.7},
+        {"text": "Joint with some privacy", "value": "joint_separate", "score": 0.35},
+        {"text": "Fully joint family", "value": "joint_full", "score": 0.1}
+      ]
+    },
+    {
+      "id": "bc_4",
+      "topic": "Family on household decisions",
+      "question": "Who does your family expect to decide on major household matters?",
+      "maps_to": "mil_4",
+      "choices": [
+        {"text": "Just the couple", "value": "couple_only", "score": 1.0},
+        {"text": "Couple leads, consults elders", "value": "couple_lead", "score": 0.7},
+        {"text": "Family consensus", "value": "family_consensus", "score": 0.4},
+        {"text": "Elders guide", "value": "elders_guide", "score": 0.15}
+      ]
+    },
+    {
+      "id": "bc_5",
+      "topic": "Father on finances",
+      "question": "How does your father think finances should be handled in your marriage?",
+      "maps_to": "fil_1",
+      "choices": [
+        {"text": "Couple equally", "value": "equal", "score": 1.0},
+        {"text": "Husband leads, wife consulted", "value": "husband_lead", "score": 0.5},
+        {"text": "Husband decides, he provides", "value": "traditional", "score": 0.2},
+        {"text": "Whoever is better at it", "value": "merit", "score": 0.85}
+      ]
+    },
+    {
+      "id": "bc_6",
+      "topic": "Father on religion",
+      "question": "How strictly does your father expect religious practice in your household?",
+      "maps_to": "fil_5",
+      "choices": [
+        {"text": "Personal choice", "value": "personal", "score": 1.0},
+        {"text": "Respectful of family", "value": "respectful", "score": 0.7},
+        {"text": "Match our household", "value": "matching", "score": 0.4},
+        {"text": "Strict observance", "value": "strict", "score": 0.15}
+      ]
+    },
+    {
+      "id": "bc_7",
+      "topic": "Sister's expected closeness",
+      "question": "How close does your sister expect to be with your wife?",
+      "maps_to": "sil_1",
+      "choices": [
+        {"text": "Like sisters — very close", "value": "close_friends", "score": 1.0},
+        {"text": "Cordial and warm", "value": "cordial", "score": 0.8},
+        {"text": "Polite, separate lives", "value": "polite", "score": 0.5},
+        {"text": "Depends on the wife", "value": "conditional", "score": 0.4}
+      ]
+    }
+  ],
+
+  "girl_expectations": [
+    {
+      "id": "ge_1",
+      "topic": "Career after marriage",
+      "question": "How do you hope your mother-in-law will feel about you working full-time?",
+      "maps_to": "mil_1",
+      "choices": [
+        {"text": "Fully supportive of my career", "value": "fully_supportive", "score": 1.0},
+        {"text": "Supportive with fair expectations", "value": "conditionally_supportive", "score": 0.65},
+        {"text": "Fine, but children may change things", "value": "until_children", "score": 0.35},
+        {"text": "I'd accept her preference for me at home", "value": "home_focused", "score": 0.1}
+      ]
+    },
+    {
+      "id": "ge_2",
+      "topic": "Visiting parents",
+      "question": "How often would you like to visit your parents after marriage?",
+      "maps_to": "mil_2",
+      "choices": [
+        {"text": "Whenever I feel like — my parents matter", "value": "whenever", "score": 1.0},
+        {"text": "Every weekend is comfortable", "value": "weekly", "score": 0.75},
+        {"text": "Twice a month is fine", "value": "biweekly", "score": 0.5},
+        {"text": "Major holidays mainly", "value": "occasional", "score": 0.2}
+      ]
+    },
+    {
+      "id": "ge_3",
+      "topic": "Living arrangement preference",
+      "question": "What living arrangement do you hope for after marriage?",
+      "maps_to": "mil_3",
+      "choices": [
+        {"text": "Our own nuclear home", "value": "nuclear", "score": 1.0},
+        {"text": "Nearby to family but separate", "value": "nearby", "score": 0.7},
+        {"text": "Joint but with private space", "value": "joint_separate", "score": 0.35},
+        {"text": "Fully joint — one household", "value": "joint_full", "score": 0.1}
+      ]
+    },
+    {
+      "id": "ge_4",
+      "topic": "Household decisions",
+      "question": "Who do you hope will decide on major household matters in your marriage?",
+      "maps_to": "mil_4",
+      "choices": [
+        {"text": "Me and my husband alone", "value": "couple_only", "score": 1.0},
+        {"text": "Us, consulting elders when needed", "value": "couple_lead", "score": 0.7},
+        {"text": "Family consensus", "value": "family_consensus", "score": 0.4},
+        {"text": "Elders guide us", "value": "elders_guide", "score": 0.15}
+      ]
+    },
+    {
+      "id": "ge_5",
+      "topic": "Finances",
+      "question": "How do you hope finances will be managed in your marriage?",
+      "maps_to": "fil_1",
+      "choices": [
+        {"text": "Equal partners", "value": "equal", "score": 1.0},
+        {"text": "Husband leads, I'm consulted", "value": "husband_lead", "score": 0.5},
+        {"text": "Traditional — he decides", "value": "traditional", "score": 0.2},
+        {"text": "Whoever is better at it", "value": "merit", "score": 0.85}
+      ]
+    },
+    {
+      "id": "ge_6",
+      "topic": "Religious flexibility",
+      "question": "What level of religious practice do you hope will be expected of you?",
+      "maps_to": "fil_5",
+      "choices": [
+        {"text": "Personal — between me and Allah", "value": "personal", "score": 1.0},
+        {"text": "Respectful of the family", "value": "respectful", "score": 0.7},
+        {"text": "Match the household", "value": "matching", "score": 0.4},
+        {"text": "Very strict observance", "value": "strict", "score": 0.15}
+      ]
+    },
+    {
+      "id": "ge_7",
+      "topic": "Sister-in-law relationship",
+      "question": "What kind of relationship do you hope to have with your sister-in-law?",
+      "maps_to": "sil_1",
+      "choices": [
+        {"text": "Close like sisters", "value": "close_friends", "score": 1.0},
+        {"text": "Warm and respectful", "value": "cordial", "score": 0.8},
+        {"text": "Polite, separate lives", "value": "polite", "score": 0.5},
+        {"text": "Depends on her", "value": "conditional", "score": 0.4}
+      ]
+    }
+  ]
+}
