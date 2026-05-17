@@ -182,6 +182,44 @@ def page_css():
     [data-testid="stExpander"] { background: white !important; border-radius: 12px !important; border: 1px solid #F8D7DE !important; }
     [data-testid="stExpander"] summary { color: #5C2A3E !important; font-weight: 600 !important; }
     [data-testid="stExpander"] p, [data-testid="stExpander"] div, [data-testid="stExpander"] span { color: #3E3E3E !important; }
+
+    /* Fix st.metric visibility */
+    [data-testid="stMetric"] {
+        background: white !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        border: 1px solid #F8D7DE !important;
+    }
+    [data-testid="stMetricValue"] {
+        color: #5C2A3E !important;
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #8A6B7A !important;
+        font-weight: 600 !important;
+    }
+    [data-testid="stMetricDelta"] {
+        color: #6BAF73 !important;
+        font-weight: 600 !important;
+    }
+    /* Fix sidebar nav links */
+    [data-testid="stSidebarNav"] a {
+        color: #5C2A3E !important;
+        font-weight: 500 !important;
+    }
+    [data-testid="stSidebarNav"] a:hover {
+        color: #D4577A !important;
+        background: rgba(212,87,122,0.08) !important;
+    }
+    [data-testid="stSidebarNavLink"] {
+        color: #5C2A3E !important;
+    }
+    section[data-testid="stSidebar"] a {
+        color: #5C2A3E !important;
+    }
+    /* Fix counterfactual card text */
+    .cf-card, .cf-card * { color: #3E3E3E !important; }
     </style>
     """, unsafe_allow_html=True)
 
