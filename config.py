@@ -18,7 +18,10 @@ MODELS_DIR = BASE_DIR / "models" / "saved"
 GENERATED_DIR.mkdir(parents=True, exist_ok=True)
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
-# ---------- OpenAI ----------
+# ---------- LLM Providers (priority: Gemini → OpenAI → Mock) ----------
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
 
@@ -68,20 +71,18 @@ THRESHOLDS = {
 # ---------- Pink / White Wedding Theme ----------
 COLORS = {
     # Primary palette
-    "rose": "#D4577A",         # deep rose (primary)
-    "blush": "#F8D7DE",         # blush pink (secondary)
-    "soft_pink": "#FDEEF2",     # very light pink
-    "gold": "#C9A96E",          # muted gold accent
-    "deep": "#5C2A3E",          # deep maroon for text
-    "charcoal": "#3E3E3E",      # body text
+    "rose": "#D4577A",
+    "blush": "#F8D7DE",
+    "soft_pink": "#FDEEF2",
+    "gold": "#C9A96E",
+    "deep": "#5C2A3E",
+    "charcoal": "#3E3E3E",
     "white": "#FFFFFF",
-    "mute": "#8A6B7A",          # muted rose-gray
-    # Backward-compatible aliases used by older modules
+    "mute": "#8A6B7A",
     "berry": "#D4577A",
     "dusty_rose": "#D4577A",
     "cream": "#FDEEF2",
     "dark": "#5C2A3E",
-    # Status colors (tuned to pink theme)
     "success": "#6BAF73",
     "warning": "#E8A846",
     "danger": "#D4577A",
