@@ -1,7 +1,14 @@
-"""Synthetic dataset generator for Zawaj.
+"""Synthetic dataset generator for Zawaj — Restructured (Individuals + Couples).
 
-Generates realistic Pakistani couple profiles with compatibility labels.
-Uses rule-based generation with controlled noise for training ML models.
+Generates TWO datasets:
+  1. individuals.csv — 5,000 unique Pakistani individuals (each with a unique person_id)
+  2. couples_dataset.csv — 10,000 pairings between those individuals with compatibility labels
+
+Same individual can appear in multiple pairings, reflecting how real matchmaking works:
+one user can be a candidate for many potential matches, not just one fixed partner.
+
+The couples_dataset.csv structure stays identical to before (so training works unchanged).
+The individuals.csv is NEW — it proves the dataset supports many-to-many matching.
 """
 
 import numpy as np
@@ -62,20 +69,15 @@ def compute_compatibility(profile_a, profile_b):
         sim = compute_domain_similarity(profile_a[domain], profile_b[domain], options)
         score += weight * sim
 
-    # Personality compatibility (complementary on some, similar on others)
+    # Personality compatibility
     personality_sim = 0.0
-    # Similar: conscientiousness, openness
     personality_sim += 1 - abs(profile_a["openness"] - profile_b["openness"])
     personality_sim += 1 - abs(profile_a["conscientiousness"] - profile_b["conscientiousness"])
-    # Complementary: extraversion (one intro + one extro can work)
     personality_sim += 0.5 + 0.5 * (1 - abs(profile_a["extraversion"] - profile_b["extraversion"]))
-    # Similar: agreeableness (both agreeable = good)
     personality_sim += min(profile_a["agreeableness"], profile_b["agreeableness"])
-    # Low neuroticism is better
     personality_sim += 1 - (profile_a["neuroticism"] + profile_b["neuroticism"]) / 2
-    personality_sim /= 5  # normalize to 0-1
+    personality_sim /= 5
 
-    # Final score: 85% life goals + 15% personality
     raw_score = 0.85 * score + 0.15 * personality_sim
     return raw_score * 100
 
@@ -84,7 +86,7 @@ def generate_family_features(rng, profile):
     """Generate family-level features for a person."""
     family = {}
     family["family_size"] = int(rng.choice([3, 4, 5, 6, 7, 8], p=[0.05, 0.15, 0.25, 0.25, 0.20, 0.10]))
-    family["father_authority"] = rng.beta(6, 4)  # 0-1, higher = more authoritative
+    family["father_authority"] = rng.beta(6, 4)
     family["mother_influence"] = rng.beta(5, 5)
     family["sibling_support"] = rng.beta(5, 5)
     family["family_conservatism"] = rng.beta(5, 5)
@@ -93,7 +95,6 @@ def generate_family_features(rng, profile):
         p=[0.15, 0.40, 0.30, 0.15],
     )
 
-    # Correlate family conservatism with individual preferences
     if profile["religion"] in ["very_strict"]:
         family["family_conservatism"] = min(1.0, family["family_conservatism"] + 0.2)
     if profile["family_structure"] in ["joint_family"]:
@@ -102,23 +103,65 @@ def generate_family_features(rng, profile):
     return family
 
 
-def generate_dataset(n_couples=10000, seed=42):
-    """Generate the full synthetic couples dataset."""
+def generate_individuals(n_individuals=5000, seed=42):
+    """Generate a pool of unique individual profiles.
+
+    Each individual gets a unique person_id. They can later be paired up
+    into couples — the same individual may appear in multiple pairings.
+    """
     rng = np.random.default_rng(seed)
     records = []
 
-    for i in range(n_couples):
-        pa = generate_individual_profile(rng)
-        pb = generate_individual_profile(rng)
-        fa = generate_family_features(rng, pa)
-        fb = generate_family_features(rng, pb)
+    # Assign gender so we can build heterosexual pairings
+    for i in range(n_individuals):
+        profile = generate_individual_profile(rng)
+        family = generate_family_features(rng, profile)
 
+        # Roughly equal split of genders
+        gender = "female" if i % 2 == 0 else "male"
+
+        record = {
+            "person_id": f"P{i:05d}",
+            "gender": gender,
+        }
+        record.update(profile)
+        record.update(family)
+        records.append(record)
+
+    df = pd.DataFrame(records)
+    return df
+
+
+def generate_couples_from_individuals(individuals_df, n_couples=10000, seed=42):
+    """Generate couple pairings by sampling from the individuals pool.
+
+    Each couple = one female + one male, sampled independently.
+    Same individual can appear in multiple couples — reflecting real-world
+    where one user is a candidate for many potential matches.
+    """
+    rng = np.random.default_rng(seed)
+    records = []
+
+    females = individuals_df[individuals_df["gender"] == "female"].reset_index(drop=True)
+    males = individuals_df[individuals_df["gender"] == "male"].reset_index(drop=True)
+
+    for i in range(n_couples):
+        # Sample one female and one male from the pool
+        f_idx = rng.integers(0, len(females))
+        m_idx = rng.integers(0, len(males))
+        person_a = females.iloc[f_idx]
+        person_b = males.iloc[m_idx]
+
+        # Extract profile dicts (excluding person_id and gender)
+        skip_cols = {"person_id", "gender"}
+        pa = {k: v for k, v in person_a.items() if k not in skip_cols}
+        pb = {k: v for k, v in person_b.items() if k not in skip_cols}
+
+        # Compute compatibility (same logic as before)
         score = compute_compatibility(pa, pb)
-        # Add noise
         score += rng.normal(0, 5)
         score = max(0, min(100, score))
 
-        # Classification label
         if score >= 70:
             label = "compatible"
         elif score >= 45:
@@ -126,33 +169,71 @@ def generate_dataset(n_couples=10000, seed=42):
         else:
             label = "incompatible"
 
+        # Build couple record — IDENTICAL structure to before (no new columns)
+        # so training pipeline works unchanged. IDs are tracked in print stats only.
         record = {"couple_id": i}
-        # Person A features
         for k, v in pa.items():
             record[f"a_{k}"] = v
-        for k, v in fa.items():
-            record[f"a_{k}"] = v
-        # Person B features
         for k, v in pb.items():
             record[f"b_{k}"] = v
-        for k, v in fb.items():
-            record[f"b_{k}"] = v
-        # Target
+
         record["compatibility_score"] = round(score, 2)
         record["compatibility_label"] = label
 
+        # Track IDs separately for the many-to-many statistics
+        record["_a_id_internal"] = person_a["person_id"]
+        record["_b_id_internal"] = person_b["person_id"]
         records.append(record)
 
     df = pd.DataFrame(records)
+    # Stash the ID columns as an attribute for stats, then drop them from the final CSV
+    df.attrs["a_ids"] = df["_a_id_internal"].tolist()
+    df.attrs["b_ids"] = df["_b_id_internal"].tolist()
+    df = df.drop(columns=["_a_id_internal", "_b_id_internal"])
     return df
 
 
+def generate_dataset(n_couples=10000, n_individuals=5000, seed=42):
+    """Generate the full dataset — both individuals and couples.
+
+    Backward-compatible: returns the couples dataframe (same as before)
+    so existing train.py works unchanged. Also writes individuals.csv to disk.
+    """
+    # Step 1: Generate the pool of unique individuals
+    individuals_df = generate_individuals(n_individuals=n_individuals, seed=seed)
+
+    # Save individuals.csv alongside couples_dataset.csv
+    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+    individuals_path = GENERATED_DIR / "individuals.csv"
+    individuals_df.to_csv(individuals_path, index=False)
+    print(f"Individuals saved to {individuals_path} — {individuals_df.shape}")
+
+    # Step 2: Generate couple pairings from the pool
+    couples_df = generate_couples_from_individuals(
+        individuals_df, n_couples=n_couples, seed=seed + 1
+    )
+
+    # Show how many times the same person appears across couples (proof of many-to-many)
+    import collections
+    a_counts = collections.Counter(couples_df.attrs["a_ids"])
+    b_counts = collections.Counter(couples_df.attrs["b_ids"])
+    print(f"Most-paired female appears in {max(a_counts.values())} couples")
+    print(f"Most-paired male appears in {max(b_counts.values())} couples")
+    print(f"Average pairings per individual: {couples_df.shape[0] * 2 / n_individuals:.1f}")
+
+    return couples_df
+
+
 if __name__ == "__main__":
-    print("Generating synthetic dataset (10,000 couples)...")
-    df = generate_dataset(n_couples=10000)
+    print("Generating synthetic dataset...")
+    print(f"  - 5,000 unique individuals")
+    print(f"  - 10,000 couple pairings sampled from those individuals")
+    print()
+
+    df = generate_dataset(n_couples=10000, n_individuals=5000)
     output_path = GENERATED_DIR / "couples_dataset.csv"
     df.to_csv(output_path, index=False)
-    print(f"Dataset saved to {output_path}")
+    print(f"\nCouples dataset saved to {output_path}")
     print(f"Shape: {df.shape}")
     print(f"\nLabel distribution:")
     print(df["compatibility_label"].value_counts())
