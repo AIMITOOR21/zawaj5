@@ -337,6 +337,34 @@ def page_css():
         background: #FDEEF2 !important;
     }
 
+    /* Fix checkbox label visibility */
+    [data-testid="stCheckbox"] label,
+    [data-testid="stCheckbox"] label p,
+    [data-testid="stCheckbox"] label span,
+    .stCheckbox label,
+    .stCheckbox label p {
+        color: #3E3E3E !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 500 !important;
+        opacity: 1 !important;
+    }
+
+    /* Fix markdown text inside expanders */
+    [data-testid="stExpander"] .stMarkdown,
+    [data-testid="stExpander"] .stMarkdown p,
+    [data-testid="stExpander"] .stMarkdown strong,
+    [data-testid="stExpander"] p,
+    [data-testid="stExpander"] span,
+    [data-testid="stExpander"] div {
+        color: #3E3E3E !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stExpander"] strong,
+    [data-testid="stExpander"] b {
+        color: #5C2A3E !important;
+        font-weight: 600 !important;
+    }
+
     @keyframes fadeInDown {
         from { opacity: 0; transform: translateY(-20px); }
         to   { opacity: 1; transform: translateY(0); }
