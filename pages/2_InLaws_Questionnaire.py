@@ -314,6 +314,29 @@ def page_css():
         color: white !important;
     }
 
+    /* Fix expander text visibility */
+    [data-testid="stExpander"] details summary,
+    [data-testid="stExpander"] details summary p,
+    [data-testid="stExpander"] summary,
+    [data-testid="stExpander"] summary p,
+    .streamlit-expanderHeader,
+    .streamlit-expanderHeader p {
+        color: #5C2A3E !important;
+        font-weight: 600 !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 1rem !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stExpander"] {
+        background: white !important;
+        border: 1px solid #F8D7DE !important;
+        border-radius: 12px !important;
+        margin: 0.5rem 0 !important;
+    }
+    [data-testid="stExpander"] details summary:hover {
+        background: #FDEEF2 !important;
+    }
+
     @keyframes fadeInDown {
         from { opacity: 0; transform: translateY(-20px); }
         to   { opacity: 1; transform: translateY(0); }
