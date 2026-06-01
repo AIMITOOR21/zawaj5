@@ -1,11 +1,14 @@
-"""Training pipeline for Zawaj — Multi-Model Comparison.
+"""Multi-Model Comparison for Zawaj — Demo Script.
 
-Trains THREE models and automatically picks the best performer:
-  1. XGBoost  — gradient boosted trees
-  2. Random Forest  — bagged decision trees
-  3. Logistic Regression  — linear baseline
+Trains TWO models and compares performance, picking the best automatically:
+  1. XGBoost — gradient boosted trees
+  2. Random Forest — bagged decision trees
 
-Best model (highest F1) is saved as the production model.
+This is a STANDALONE script for demonstrating model selection during the demo.
+It does NOT replace train.py — the deployed app still uses train.py (XGBoost).
+
+To run:
+    python -m models.train_comparison
 """
 
 import numpy as np
@@ -24,13 +27,11 @@ from models.compatibility_model import CompatibilityModel
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, accuracy_score, f1_score
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.linear_model import LogisticRegression, LinearRegression
-from sklearn.preprocessing import StandardScaler
 
 
 def evaluate_xgboost(X, y_score, y_label, feature_cols):
-    """Train and evaluate XGBoost."""
-    print("\n[1/3] Training XGBoost...")
+    """Train and evaluate XGBoost (gradient boosting)."""
+    print("\n[1/2] Training XGBoost...")
     t0 = time.time()
     model = CompatibilityModel()
     metrics = model.train(X, y_score, y_label, feature_names=feature_cols)
@@ -43,17 +44,19 @@ def evaluate_xgboost(X, y_score, y_label, feature_cols):
 
 
 def evaluate_random_forest(X, y_score, y_label):
-    """Train and evaluate Random Forest."""
-    print("\n[2/3] Training Random Forest...")
+    """Train and evaluate Random Forest (bagging)."""
+    print("\n[2/2] Training Random Forest...")
     t0 = time.time()
     X_train, X_val, ys_train, ys_val, yl_train, yl_val = train_test_split(
         X, y_score, y_label, test_size=0.2, random_state=42
     )
 
+    # Regressor — predicts compatibility score (0-100)
     reg = RandomForestRegressor(n_estimators=150, max_depth=10, random_state=42, n_jobs=-1)
     reg.fit(X_train, ys_train)
     rmse = np.sqrt(mean_squared_error(ys_val, reg.predict(X_val)))
 
+    # Classifier — predicts compatibility label
     clf = RandomForestClassifier(n_estimators=150, max_depth=10, random_state=42, n_jobs=-1)
     clf.fit(X_train, yl_train)
     pred = clf.predict(X_val)
@@ -65,41 +68,12 @@ def evaluate_random_forest(X, y_score, y_label):
     print(f"  Accuracy: {acc:.4f}")
     print(f"  F1-Score: {f1:.4f}")
     print(f"  Time: {elapsed:.1f}s")
-    return {"regressor": reg, "classifier": clf}, {"rmse": rmse, "accuracy": acc, "f1_score": f1}
+    return ({"regressor": reg, "classifier": clf},
+            {"rmse": rmse, "accuracy": acc, "f1_score": f1})
 
 
-def evaluate_logistic(X, y_score, y_label):
-    """Train and evaluate Logistic Regression (linear baseline)."""
-    print("\n[3/3] Training Logistic Regression...")
-    t0 = time.time()
-    X_train, X_val, ys_train, ys_val, yl_train, yl_val = train_test_split(
-        X, y_score, y_label, test_size=0.2, random_state=42
-    )
-
-    scaler = StandardScaler()
-    X_train_s = scaler.fit_transform(X_train)
-    X_val_s = scaler.transform(X_val)
-
-    reg = LinearRegression()
-    reg.fit(X_train_s, ys_train)
-    rmse = np.sqrt(mean_squared_error(ys_val, reg.predict(X_val_s)))
-
-    clf = LogisticRegression(max_iter=1000, multi_class="auto", random_state=42)
-    clf.fit(X_train_s, yl_train)
-    pred = clf.predict(X_val_s)
-    acc = accuracy_score(yl_val, pred)
-    f1 = f1_score(yl_val, pred, average="weighted")
-    elapsed = time.time() - t0
-
-    print(f"  RMSE: {rmse:.2f}")
-    print(f"  Accuracy: {acc:.4f}")
-    print(f"  F1-Score: {f1:.4f}")
-    print(f"  Time: {elapsed:.1f}s")
-    return {"regressor": reg, "classifier": clf, "scaler": scaler}, {"rmse": rmse, "accuracy": acc, "f1_score": f1}
-
-
-def train_all():
-    """Generate dataset (if missing), train 3 models, pick the best."""
+def run_comparison():
+    """Run full comparison between XGBoost and Random Forest, pick the best."""
     dataset_path = GENERATED_DIR / "couples_dataset.csv"
     if not dataset_path.exists():
         print("Generating synthetic dataset (10,000 couples)...")
@@ -127,9 +101,6 @@ def train_all():
     rf_model, rf_metrics = evaluate_random_forest(X, y_score, y_label)
     results["Random Forest"] = {"model": rf_model, "metrics": rf_metrics}
 
-    lr_model, lr_metrics = evaluate_logistic(X, y_score, y_label)
-    results["Logistic Regression"] = {"model": lr_model, "metrics": lr_metrics}
-
     # ---------- Comparison summary ----------
     print("\n" + "=" * 60)
     print("COMPARISON SUMMARY")
@@ -144,19 +115,18 @@ def train_all():
     best_name = max(results.keys(), key=lambda k: results[k]["metrics"]["f1_score"])
     best_info = results[best_name]
     print("\n" + "=" * 60)
-    print(f"🏆 BEST MODEL: {best_name}")
+    print(f"BEST MODEL: {best_name}")
     print(f"   F1-Score: {best_info['metrics']['f1_score']:.4f}")
     print(f"   Accuracy: {best_info['metrics']['accuracy']:.4f}")
     print(f"   RMSE:     {best_info['metrics']['rmse']:.2f}")
     print("=" * 60)
 
-    # Save the XGBoost model regardless (it's the one the app integrates with)
-    # but save the comparison results so the demo can show all three.
+    # Save XGBoost as production model (the app integrates with it)
     xgb_model.save()
     with open(MODELS_DIR / "encoders.pkl", "wb") as f:
         pickle.dump({"encoders": encoders, "label_enc": label_enc, "feature_cols": feature_cols}, f)
 
-    # Save the comparison report for the demo
+    # Save comparison report for demo
     comparison_report = {
         name: {"rmse": float(info["metrics"]["rmse"]),
                "accuracy": float(info["metrics"]["accuracy"]),
@@ -168,9 +138,9 @@ def train_all():
         pickle.dump(comparison_report, f)
 
     print("\nModels and comparison report saved.")
-    print("=== Training Complete ===")
+    print("=== Comparison Complete ===")
     return xgb_model, results, best_name
 
 
 if __name__ == "__main__":
-    train_all()
+    run_comparison()
