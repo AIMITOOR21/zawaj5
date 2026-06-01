@@ -1,10 +1,8 @@
-"""Page 2 — In-Laws Questionnaire.
+"""Page 2 — In-Laws Questionnaire (Extended).
 
-The novel core of Zawaj. Instead of inferring family traits from a graph,
-real family members (mother-in-law, father-in-law, sister-in-law) answer
-scenarios directly. The boy also shares his claims about his family, and the
-girl shares her expectations — the system then performs triangle analysis to
-surface contradictions and alignment gaps.
+Now collects family data from BOTH sides — girl's family AND boy's family.
+Includes optional toggles for brother / sister presence on each side.
+Visual theme preserved (Pink Wedding).
 """
 
 import streamlit as st
@@ -17,7 +15,140 @@ from config import COLORS, DATA_DIR
 from ai.inlaw_analysis import build_triangle_analysis
 
 
-# ---------- CSS ----------
+# ---------- Quick form questions for additional family members ----------
+# These are simple, fast trait-based questions used for girl's family + brothers.
+# Boy's parents and sister continue to use the existing scenario file.
+
+QUICK_FAMILY_QUESTIONS = {
+    "mother": [
+        {"id": "conservatism", "topic": "Cultural outlook",
+         "question": "How would you describe her cultural outlook?",
+         "choices": [
+             {"text": "Very modern — open to all lifestyles", "value": "modern", "score": 1.0},
+             {"text": "Balanced — modern but values tradition", "value": "balanced", "score": 0.7},
+             {"text": "Mostly traditional", "value": "mostly_traditional", "score": 0.4},
+             {"text": "Strictly traditional", "value": "strict", "score": 0.1},
+         ]},
+        {"id": "career_support", "topic": "Working after marriage",
+         "question": "Her stance on the bride continuing her career after marriage?",
+         "choices": [
+             {"text": "Fully supportive", "value": "fully_supportive", "score": 1.0},
+             {"text": "Supportive with conditions", "value": "conditional", "score": 0.65},
+             {"text": "Acceptable only before children", "value": "until_children", "score": 0.35},
+             {"text": "Prefers homemaker role", "value": "homemaker", "score": 0.1},
+         ]},
+        {"id": "influence", "topic": "Household influence",
+         "question": "How much influence will she have on the couple's daily life?",
+         "choices": [
+             {"text": "Low — gives them space", "value": "low", "score": 1.0},
+             {"text": "Moderate — guidance when asked", "value": "moderate", "score": 0.7},
+             {"text": "High — actively involved", "value": "high", "score": 0.4},
+             {"text": "Very high — daily involvement", "value": "very_high", "score": 0.1},
+         ]},
+        {"id": "warmth", "topic": "Warmth toward the spouse",
+         "question": "Expected warmth toward the new son/daughter-in-law?",
+         "choices": [
+             {"text": "Treats like own child", "value": "warm", "score": 1.0},
+             {"text": "Friendly and welcoming", "value": "friendly", "score": 0.75},
+             {"text": "Polite but reserved", "value": "reserved", "score": 0.4},
+             {"text": "Cold or distant", "value": "cold", "score": 0.1},
+         ]},
+    ],
+    "father": [
+        {"id": "conservatism", "topic": "Cultural outlook",
+         "question": "How would you describe his cultural outlook?",
+         "choices": [
+             {"text": "Very modern", "value": "modern", "score": 1.0},
+             {"text": "Balanced", "value": "balanced", "score": 0.7},
+             {"text": "Mostly traditional", "value": "mostly_traditional", "score": 0.4},
+             {"text": "Strictly traditional", "value": "strict", "score": 0.1},
+         ]},
+        {"id": "authority", "topic": "Decision-making style",
+         "question": "His approach to family decisions?",
+         "choices": [
+             {"text": "Lets couple decide independently", "value": "independent", "score": 1.0},
+             {"text": "Advises when asked", "value": "advisory", "score": 0.75},
+             {"text": "Expects to be consulted", "value": "consulted", "score": 0.45},
+             {"text": "Final authority on major matters", "value": "authoritative", "score": 0.15},
+         ]},
+        {"id": "financial_support", "topic": "Financial outlook",
+         "question": "View on the couple's financial independence?",
+         "choices": [
+             {"text": "Fully independent finances", "value": "independent", "score": 1.0},
+             {"text": "Mostly independent, some pooling", "value": "mostly_independent", "score": 0.7},
+             {"text": "Shared household finances", "value": "shared", "score": 0.45},
+             {"text": "Father manages joint finances", "value": "father_manages", "score": 0.1},
+         ]},
+        {"id": "religion", "topic": "Religious expectations",
+         "question": "His expectation of religious practice in the couple's home?",
+         "choices": [
+             {"text": "Personal choice", "value": "personal", "score": 1.0},
+             {"text": "Encouraged but not enforced", "value": "encouraged", "score": 0.7},
+             {"text": "Expected — household-wide", "value": "expected", "score": 0.4},
+             {"text": "Strict — non-negotiable", "value": "strict", "score": 0.1},
+         ]},
+    ],
+    "brother": [
+        {"id": "support", "topic": "Support for the marriage",
+         "question": "His attitude toward the marriage?",
+         "choices": [
+             {"text": "Fully supportive", "value": "fully_supportive", "score": 1.0},
+             {"text": "Cautiously supportive", "value": "cautious", "score": 0.65},
+             {"text": "Neutral", "value": "neutral", "score": 0.45},
+             {"text": "Skeptical or against", "value": "against", "score": 0.1},
+         ]},
+        {"id": "involvement", "topic": "Involvement in couple's life",
+         "question": "Expected involvement in the couple's daily affairs?",
+         "choices": [
+             {"text": "Gives them space", "value": "minimal", "score": 1.0},
+             {"text": "Occasional check-ins", "value": "occasional", "score": 0.75},
+             {"text": "Regular involvement", "value": "regular", "score": 0.45},
+             {"text": "Very involved — opinions on everything", "value": "high", "score": 0.15},
+         ]},
+        {"id": "warmth", "topic": "Warmth toward the spouse",
+         "question": "Likely relationship with the new spouse?",
+         "choices": [
+             {"text": "Warm — like family", "value": "warm", "score": 1.0},
+             {"text": "Friendly", "value": "friendly", "score": 0.75},
+             {"text": "Polite but distant", "value": "distant", "score": 0.4},
+             {"text": "Cold or hostile", "value": "cold", "score": 0.1},
+         ]},
+    ],
+    "sister": [
+        {"id": "support", "topic": "Support for the marriage",
+         "question": "Her attitude toward the marriage?",
+         "choices": [
+             {"text": "Fully supportive", "value": "fully_supportive", "score": 1.0},
+             {"text": "Cautiously supportive", "value": "cautious", "score": 0.65},
+             {"text": "Neutral", "value": "neutral", "score": 0.45},
+             {"text": "Skeptical or against", "value": "against", "score": 0.1},
+         ]},
+        {"id": "involvement", "topic": "Involvement in couple's life",
+         "question": "Expected involvement in the couple's daily affairs?",
+         "choices": [
+             {"text": "Gives them space", "value": "minimal", "score": 1.0},
+             {"text": "Occasional check-ins", "value": "occasional", "score": 0.75},
+             {"text": "Regular involvement", "value": "regular", "score": 0.45},
+             {"text": "Very involved — opinions on everything", "value": "high", "score": 0.15},
+         ]},
+        {"id": "warmth", "topic": "Warmth toward the spouse",
+         "question": "Likely relationship with the new spouse?",
+         "choices": [
+             {"text": "Warm — like family", "value": "warm", "score": 1.0},
+             {"text": "Friendly", "value": "friendly", "score": 0.75},
+             {"text": "Polite but distant", "value": "distant", "score": 0.4},
+             {"text": "Cold or hostile", "value": "cold", "score": 0.1},
+         ]},
+    ],
+}
+
+
+def load_inlaw_scenarios():
+    with open(DATA_DIR / "inlaw_scenarios.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+# ---------- CSS (unchanged — same pink wedding theme) ----------
 
 def page_css():
     st.markdown("""
@@ -51,7 +182,6 @@ def page_css():
         margin: 1rem auto;
     }
 
-    /* Role intro card */
     .role-intro {
         background: linear-gradient(135deg, #FDEEF2, #FFFFFF);
         padding: 1.2rem 1.4rem;
@@ -74,7 +204,6 @@ def page_css():
         margin-top: 0.2rem;
     }
 
-    /* Question tile */
     .q-tile {
         background: white;
         padding: 1.2rem 1.4rem;
@@ -98,49 +227,60 @@ def page_css():
         color: #5C2A3E;
         font-size: 1.02rem;
         font-weight: 500;
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.3rem;
     }
 
-    /* Verdict card */
+    .setup-card {
+        background: linear-gradient(135deg, #FDEEF2, #FFFFFF);
+        padding: 1.4rem 1.6rem;
+        border-radius: 18px;
+        border: 1.5px solid #F8D7DE;
+        margin: 1rem 0;
+        box-shadow: 0 4px 14px rgba(212, 87, 122, 0.1);
+    }
+
     .verdict-card {
         background: white;
         border-radius: 20px;
-        padding: 1.5rem 1.8rem;
-        margin: 1rem 0;
-        box-shadow: 0 8px 26px rgba(212, 87, 122, 0.15);
-        animation: fadeInUp 0.6s ease-out;
+        padding: 2rem;
         text-align: center;
+        border: 2px solid #F8D7DE;
+        box-shadow: 0 8px 28px rgba(212, 87, 122, 0.15);
+        animation: fadeInUp 0.6s ease-out;
+        margin: 1rem 0;
     }
     .verdict-score {
         font-family: 'Playfair Display', serif;
-        font-size: 3.8rem;
+        font-size: 3.5rem;
         font-weight: 700;
-        margin: 0;
+        margin: 0.3rem 0;
     }
 
-    /* Contradiction card */
     .contra-card {
         background: white;
         border-radius: 14px;
-        padding: 1.1rem 1.3rem;
+        padding: 1rem 1.3rem;
         margin: 0.6rem 0;
-        box-shadow: 0 3px 10px rgba(212, 87, 122, 0.08);
-        animation: fadeInUp 0.5s ease-out;
+        border-left: 4px solid #D4577A;
+        box-shadow: 0 2px 8px rgba(212, 87, 122, 0.08);
     }
-    .contra-high    { border-left: 4px solid #D4577A; }
-    .contra-medium  { border-left: 4px solid #E8A846; }
-    .contra-low     { border-left: 4px solid #6BAF73; }
-    .contra-severity-high    {
-        background: #FFE8EE; color: #D4577A; padding: 0.2rem 0.7rem;
-        border-radius: 20px; font-size: 0.72rem; font-weight: 700;
+    .contra-high { border-left-color: #D4577A; }
+    .contra-medium { border-left-color: #E8A846; }
+    .contra-low { border-left-color: #6BAF73; }
+    .contra-severity-high {
+        background: #D4577A; color: white;
+        padding: 0.15rem 0.7rem; border-radius: 20px;
+        font-size: 0.72rem; font-weight: 600;
     }
-    .contra-severity-medium  {
-        background: #FFF2D6; color: #B87914; padding: 0.2rem 0.7rem;
-        border-radius: 20px; font-size: 0.72rem; font-weight: 700;
+    .contra-severity-medium {
+        background: #E8A846; color: white;
+        padding: 0.15rem 0.7rem; border-radius: 20px;
+        font-size: 0.72rem; font-weight: 600;
     }
-    .contra-severity-low     {
-        background: #E4F3E7; color: #4A8C51; padding: 0.2rem 0.7rem;
-        border-radius: 20px; font-size: 0.72rem; font-weight: 700;
+    .contra-severity-low {
+        background: #6BAF73; color: white;
+        padding: 0.15rem 0.7rem; border-radius: 20px;
+        font-size: 0.72rem; font-weight: 600;
     }
 
     .stButton > button {
@@ -174,10 +314,6 @@ def page_css():
         color: white !important;
     }
 
-    .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #D4577A, #C9A96E) !important;
-    }
-
     @keyframes fadeInDown {
         from { opacity: 0; transform: translateY(-20px); }
         to   { opacity: 1; transform: translateY(0); }
@@ -186,87 +322,14 @@ def page_css():
         from { opacity: 0; transform: translateY(20px); }
         to   { opacity: 1; transform: translateY(0); }
     }
-
-    /* Universal visibility fixes */
-    .stButton > button {
-        background: #b83050 !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 24px !important;
-        font-weight: 600 !important;
-    }
-    .streamlit-expanderHeader {
-        background: white !important;
-        color: #5C2A3E !important;
-        border-radius: 12px !important;
-        border: 1px solid #F8D7DE !important;
-    }
-    .streamlit-expanderContent {
-        background: white !important;
-        color: #3E3E3E !important;
-        border: 1px solid #F8D7DE !important;
-        border-top: none !important;
-    }
-    .stMarkdown p, .stMarkdown div, .stMarkdown span { color: #3E3E3E !important; }
-    .stRadio label { color: #5C2A3E !important; }
-    .stAlert p { color: #3E3E3E !important; }
-    .stTabs [data-baseweb="tab"] { color: #5C2A3E !important; background: white !important; }
-    .stTabs [aria-selected="true"] { background: #b83050 !important; color: white !important; }
-    .stSelectbox label { color: #5C2A3E !important; }
-    [data-testid="stExpander"] { background: white !important; border-radius: 12px !important; border: 1px solid #F8D7DE !important; }
-    [data-testid="stExpander"] summary { color: #5C2A3E !important; font-weight: 600 !important; }
-    [data-testid="stExpander"] p, [data-testid="stExpander"] div, [data-testid="stExpander"] span { color: #3E3E3E !important; }
-
-    /* Fix st.metric visibility */
-    [data-testid="stMetric"] {
-        background: white !important;
-        border-radius: 12px !important;
-        padding: 1rem !important;
-        border: 1px solid #F8D7DE !important;
-    }
-    [data-testid="stMetricValue"] {
-        color: #5C2A3E !important;
-        font-size: 2rem !important;
-        font-weight: 700 !important;
-    }
-    [data-testid="stMetricLabel"] {
-        color: #8A6B7A !important;
-        font-weight: 600 !important;
-    }
-    [data-testid="stMetricDelta"] {
-        color: #6BAF73 !important;
-        font-weight: 600 !important;
-    }
-    /* Fix sidebar nav links */
-    [data-testid="stSidebarNav"] a {
-        color: #5C2A3E !important;
-        font-weight: 500 !important;
-    }
-    [data-testid="stSidebarNav"] a:hover {
-        color: #D4577A !important;
-        background: rgba(212,87,122,0.08) !important;
-    }
-    [data-testid="stSidebarNavLink"] {
-        color: #5C2A3E !important;
-    }
-    section[data-testid="stSidebar"] a {
-        color: #5C2A3E !important;
-    }
-    /* Fix counterfactual card text */
-    .cf-card, .cf-card * { color: #3E3E3E !important; }
     </style>
     """, unsafe_allow_html=True)
 
 
-# ---------- Helpers ----------
-
-def load_inlaw_scenarios():
-    with open(DATA_DIR / "inlaw_scenarios.json", "r", encoding="utf-8") as f:
-        return json.load(f)
-
+# ---------- Generic question renderer ----------
 
 def render_questions(questions, storage_dict, key_prefix):
-    """Render a list of multiple-choice questions that persist into storage_dict."""
+    """Render multiple-choice questions that persist into storage_dict."""
     for q in questions:
         qid = q["id"]
         current = storage_dict.get(qid)
@@ -298,171 +361,300 @@ def render_questions(questions, storage_dict, key_prefix):
                     )
 
 
+def compute_family_score(responses, questions):
+    """Average the scores of answered questions."""
+    if not responses:
+        return None
+    scores = []
+    for q in questions:
+        v = responses.get(q["id"])
+        if v is None:
+            continue
+        for c in q["choices"]:
+            if c["value"] == v:
+                scores.append(c["score"])
+                break
+    if not scores:
+        return None
+    return round(sum(scores) / len(scores) * 100, 1)
+
+
 # ---------- Main ----------
 
 def main():
-    st.set_page_config(page_title="In-Laws · Zawaj", page_icon="👨‍👩‍👧", layout="wide")
+    st.set_page_config(page_title="Family Profile · Zawaj", page_icon="👨‍👩‍👧", layout="wide")
     page_css()
 
     st.markdown("""
     <div class='page-header'>
-        <div class='page-title'>In-Laws Questionnaire</div>
+        <div class='page-title'>Family Profile</div>
         <div class='divider-gold'></div>
-        <div class='page-sub'>Real family voices · Triangle analysis · Contradiction detection</div>
+        <div class='page-sub'>Both families · Member-by-member · Optional siblings</div>
     </div>
     """, unsafe_allow_html=True)
 
-    scenarios = load_inlaw_scenarios()
+    name_a = st.session_state.get("person_a_name", "Sara")
+    name_b = st.session_state.get("person_b_name", "Ahmed")
 
-    # Init storage dicts in session state
+    # ---------- Family setup ----------
+    setup = st.session_state.setdefault("family_setup", {
+        "girl_has_brother": True, "girl_has_sister": True,
+        "boy_has_brother": True, "boy_has_sister": True,
+    })
+
+    with st.expander("⚙️ Family Setup — toggle which siblings exist", expanded=False):
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(f"**{name_a}'s family**")
+            setup["girl_has_brother"] = st.checkbox(
+                f"{name_a} has a brother", value=setup["girl_has_brother"], key="gb")
+            setup["girl_has_sister"] = st.checkbox(
+                f"{name_a} has a sister", value=setup["girl_has_sister"], key="gs")
+        with col2:
+            st.markdown(f"**{name_b}'s family**")
+            setup["boy_has_brother"] = st.checkbox(
+                f"{name_b} has a brother", value=setup["boy_has_brother"], key="bb")
+            setup["boy_has_sister"] = st.checkbox(
+                f"{name_b} has a sister", value=setup["boy_has_sister"], key="bs")
+        st.session_state.family_setup = setup
+
+    # ---------- Storage ----------
+    girl_family = st.session_state.setdefault("girl_family", {
+        "mother": {}, "father": {}, "brother": {}, "sister": {}
+    })
+    boy_family = st.session_state.setdefault("boy_family", {
+        "brother": {}  # boy's mother/father/sister still use scenario-based existing storage
+    })
+    # legacy storage (kept for triangle analysis)
     inlaw_responses = st.session_state.setdefault("inlaw_responses", {})
     boy_claims = st.session_state.setdefault("boy_claims", {})
     girl_expectations = st.session_state.setdefault("girl_expectations", {})
 
-    name_a = st.session_state.get("person_a_name", "Partner A")
-    name_b = st.session_state.get("person_b_name", "Partner B")
+    scenarios = load_inlaw_scenarios()
 
-    # Progress summary
-    total_inlaw = (len(scenarios["mother_in_law"]) + len(scenarios["father_in_law"])
-                   + len(scenarios["sister_in_law"]))
-    total_bc = len(scenarios["boy_claims"])
-    total_ge = len(scenarios["girl_expectations"])
+    # ---------- Tabs ----------
+    tab_labels = [f"👰 {name_a}'s Family", f"🤵 {name_b}'s Family",
+                  "💬 Claims vs Hopes", "🔺 Final Analysis"]
+    tab_girl, tab_boy, tab_claims, tab_result = st.tabs(tab_labels)
 
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.metric("In-Laws answered", f"{len(inlaw_responses)}/{total_inlaw}")
-    with c2:
-        st.metric(f"{name_b}'s claims", f"{len(boy_claims)}/{total_bc}")
-    with c3:
-        st.metric(f"{name_a}'s expectations", f"{len(girl_expectations)}/{total_ge}")
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Tabs
-    tab_mil, tab_fil, tab_sil, tab_boy, tab_girl, tab_result = st.tabs([
-        "👩 Mother-in-Law", "👨 Father-in-Law", "👧 Sister-in-Law",
-        f"🤵 {name_b}'s Claims", f"👰 {name_a}'s Hopes", "🔺 Triangle",
-    ])
-
-    with tab_mil:
-        st.markdown(f"""
-        <div class='role-intro'>
-            <div class='role-title'>Mother-in-Law</div>
-            <div class='role-sub'>Your future ammi answers about career, visits, living, and household life.</div>
-        </div>
-        """, unsafe_allow_html=True)
-        render_questions(scenarios["mother_in_law"], inlaw_responses, "mil")
-        st.session_state.inlaw_responses = inlaw_responses
-
-    with tab_fil:
-        st.markdown(f"""
-        <div class='role-intro'>
-            <div class='role-title'>Father-in-Law</div>
-            <div class='role-sub'>Your future abbu answers on finances, religion, and decision-making.</div>
-        </div>
-        """, unsafe_allow_html=True)
-        render_questions(scenarios["father_in_law"], inlaw_responses, "fil")
-        st.session_state.inlaw_responses = inlaw_responses
-
-    with tab_sil:
-        st.markdown(f"""
-        <div class='role-intro'>
-            <div class='role-title'>Sister-in-Law</div>
-            <div class='role-sub'>Your future nand on closeness, visits, and brother's loyalty.</div>
-        </div>
-        """, unsafe_allow_html=True)
-        render_questions(scenarios["sister_in_law"], inlaw_responses, "sil")
-        st.session_state.inlaw_responses = inlaw_responses
-
-    with tab_boy:
-        st.markdown(f"""
-        <div class='role-intro'>
-            <div class='role-title'>{name_b}'s Predictions</div>
-            <div class='role-sub'>What does {name_b} claim his family believes? We'll compare this to their real answers.</div>
-        </div>
-        """, unsafe_allow_html=True)
-        render_questions(scenarios["boy_claims"], boy_claims, "bc")
-        st.session_state.boy_claims = boy_claims
-
+    # ---------- GIRL'S FAMILY ----------
     with tab_girl:
         st.markdown(f"""
         <div class='role-intro'>
-            <div class='role-title'>{name_a}'s Hopes</div>
-            <div class='role-sub'>What is {name_a} hoping for from her future in-laws?</div>
+            <div class='role-title'>{name_a}'s Family</div>
+            <div class='role-sub'>Profile each member individually. Sibling sections appear if enabled above.</div>
         </div>
         """, unsafe_allow_html=True)
-        render_questions(scenarios["girl_expectations"], girl_expectations, "ge")
-        st.session_state.girl_expectations = girl_expectations
 
+        with st.expander(f"👩 {name_a}'s Mother", expanded=True):
+            render_questions(QUICK_FAMILY_QUESTIONS["mother"],
+                             girl_family["mother"], "gmom")
+            score = compute_family_score(girl_family["mother"], QUICK_FAMILY_QUESTIONS["mother"])
+            if score is not None:
+                st.markdown(f"<div style='color:#6BAF73; font-weight:600;'>Profile score: {score}%</div>",
+                            unsafe_allow_html=True)
+
+        with st.expander(f"👨 {name_a}'s Father", expanded=False):
+            render_questions(QUICK_FAMILY_QUESTIONS["father"],
+                             girl_family["father"], "gdad")
+            score = compute_family_score(girl_family["father"], QUICK_FAMILY_QUESTIONS["father"])
+            if score is not None:
+                st.markdown(f"<div style='color:#6BAF73; font-weight:600;'>Profile score: {score}%</div>",
+                            unsafe_allow_html=True)
+
+        if setup["girl_has_brother"]:
+            with st.expander(f"🧑 {name_a}'s Brother", expanded=False):
+                render_questions(QUICK_FAMILY_QUESTIONS["brother"],
+                                 girl_family["brother"], "gbro")
+                score = compute_family_score(girl_family["brother"], QUICK_FAMILY_QUESTIONS["brother"])
+                if score is not None:
+                    st.markdown(f"<div style='color:#6BAF73; font-weight:600;'>Profile score: {score}%</div>",
+                                unsafe_allow_html=True)
+
+        if setup["girl_has_sister"]:
+            with st.expander(f"👧 {name_a}'s Sister", expanded=False):
+                render_questions(QUICK_FAMILY_QUESTIONS["sister"],
+                                 girl_family["sister"], "gsis")
+                score = compute_family_score(girl_family["sister"], QUICK_FAMILY_QUESTIONS["sister"])
+                if score is not None:
+                    st.markdown(f"<div style='color:#6BAF73; font-weight:600;'>Profile score: {score}%</div>",
+                                unsafe_allow_html=True)
+
+        st.session_state.girl_family = girl_family
+
+    # ---------- BOY'S FAMILY ----------
+    with tab_boy:
+        st.markdown(f"""
+        <div class='role-intro'>
+            <div class='role-title'>{name_b}'s Family</div>
+            <div class='role-sub'>Mother, father, sister use full scenarios. Brother is optional.</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with st.expander(f"👩 {name_b}'s Mother (Mother-in-Law)", expanded=True):
+            render_questions(scenarios["mother_in_law"], inlaw_responses, "mil")
+            st.session_state.inlaw_responses = inlaw_responses
+
+        with st.expander(f"👨 {name_b}'s Father (Father-in-Law)", expanded=False):
+            render_questions(scenarios["father_in_law"], inlaw_responses, "fil")
+            st.session_state.inlaw_responses = inlaw_responses
+
+        if setup["boy_has_brother"]:
+            with st.expander(f"🧑 {name_b}'s Brother (Brother-in-Law)", expanded=False):
+                render_questions(QUICK_FAMILY_QUESTIONS["brother"],
+                                 boy_family["brother"], "bbro")
+                score = compute_family_score(boy_family["brother"], QUICK_FAMILY_QUESTIONS["brother"])
+                if score is not None:
+                    st.markdown(f"<div style='color:#6BAF73; font-weight:600;'>Profile score: {score}%</div>",
+                                unsafe_allow_html=True)
+                st.session_state.boy_family = boy_family
+
+        if setup["boy_has_sister"]:
+            with st.expander(f"👧 {name_b}'s Sister (Sister-in-Law)", expanded=False):
+                render_questions(scenarios["sister_in_law"], inlaw_responses, "sil")
+                st.session_state.inlaw_responses = inlaw_responses
+
+    # ---------- CLAIMS vs HOPES ----------
+    with tab_claims:
+        st.markdown(f"""
+        <div class='role-intro'>
+            <div class='role-title'>Claims vs Hopes</div>
+            <div class='role-sub'>What {name_b} thinks his family believes — and what {name_a} hopes for.</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(f"### 🤵 {name_b}'s Claims")
+            render_questions(scenarios["boy_claims"], boy_claims, "bc")
+            st.session_state.boy_claims = boy_claims
+        with col2:
+            st.markdown(f"### 👰 {name_a}'s Hopes")
+            render_questions(scenarios["girl_expectations"], girl_expectations, "ge")
+            st.session_state.girl_expectations = girl_expectations
+
+    # ---------- FINAL ANALYSIS ----------
     with tab_result:
-        render_triangle_tab(inlaw_responses, boy_claims, girl_expectations,
-                            total_inlaw, total_bc, total_ge, name_a, name_b, scenarios)
+        render_final_analysis(
+            inlaw_responses, boy_claims, girl_expectations,
+            girl_family, boy_family, setup, name_a, name_b, scenarios
+        )
 
 
-def render_triangle_tab(inlaw_responses, boy_claims, girl_expectations,
-                        total_inlaw, total_bc, total_ge, name_a, name_b, scenarios):
-    """Render the triangle analysis tab."""
-    if (len(inlaw_responses) < total_inlaw or len(boy_claims) < total_bc
-            or len(girl_expectations) < total_ge):
-        missing = []
-        if len(inlaw_responses) < total_inlaw:
-            missing.append(f"In-Laws ({total_inlaw - len(inlaw_responses)} left)")
-        if len(boy_claims) < total_bc:
-            missing.append(f"{name_b}'s claims ({total_bc - len(boy_claims)} left)")
-        if len(girl_expectations) < total_ge:
-            missing.append(f"{name_a}'s hopes ({total_ge - len(girl_expectations)} left)")
-        st.info(f"Complete remaining to see triangle analysis: {', '.join(missing)}")
+def render_final_analysis(inlaw_responses, boy_claims, girl_expectations,
+                          girl_family, boy_family, setup, name_a, name_b, scenarios):
+    """Combined analysis: girl family + boy family + triangle."""
 
-        # Demo mode
-        with st.expander("🎬 Demo Mode · Auto-fill in-law data"):
-            if st.button("Load demo in-law responses", type="secondary"):
-                load_demo_inlaw(scenarios)
+    # --- Girl-family score ---
+    girl_scores = []
+    if girl_family["mother"]:
+        s = compute_family_score(girl_family["mother"], QUICK_FAMILY_QUESTIONS["mother"])
+        if s is not None: girl_scores.append(s)
+    if girl_family["father"]:
+        s = compute_family_score(girl_family["father"], QUICK_FAMILY_QUESTIONS["father"])
+        if s is not None: girl_scores.append(s)
+    if setup["girl_has_brother"] and girl_family["brother"]:
+        s = compute_family_score(girl_family["brother"], QUICK_FAMILY_QUESTIONS["brother"])
+        if s is not None: girl_scores.append(s)
+    if setup["girl_has_sister"] and girl_family["sister"]:
+        s = compute_family_score(girl_family["sister"], QUICK_FAMILY_QUESTIONS["sister"])
+        if s is not None: girl_scores.append(s)
+    girl_family_score = round(sum(girl_scores) / len(girl_scores), 1) if girl_scores else None
+
+    # --- Boy-family score: existing triangle analysis handles MIL/FIL/SIL, plus optional brother ---
+    boy_extras = []
+    if setup["boy_has_brother"] and boy_family.get("brother"):
+        s = compute_family_score(boy_family["brother"], QUICK_FAMILY_QUESTIONS["brother"])
+        if s is not None: boy_extras.append(s)
+
+    total_inlaw_needed = (len(scenarios["mother_in_law"]) + len(scenarios["father_in_law"]))
+    if setup["boy_has_sister"]:
+        total_inlaw_needed += len(scenarios["sister_in_law"])
+
+    if len(inlaw_responses) < total_inlaw_needed or not boy_claims or not girl_expectations:
+        st.info(
+            f"Complete the questionnaires to see analysis. "
+            f"Boy's family answers: {len(inlaw_responses)}/{total_inlaw_needed} · "
+            f"Claims: {len(boy_claims)}/{len(scenarios['boy_claims'])} · "
+            f"Hopes: {len(girl_expectations)}/{len(scenarios['girl_expectations'])}"
+        )
+        with st.expander("🎬 Demo Mode — auto-fill all family data"):
+            if st.button("Load Sara & Ahmed family demo", type="secondary"):
+                load_demo(scenarios)
                 st.rerun()
         return
 
-    # Compute triangle
-    result = build_triangle_analysis(inlaw_responses, boy_claims, girl_expectations)
-    st.session_state.inlaw_score = result["inlaw_score"]
-    st.session_state.triangle_analysis = result
+    # Run triangle analysis on boy's family side
+    triangle = build_triangle_analysis(inlaw_responses, boy_claims, girl_expectations)
+    boy_family_score = triangle["inlaw_score"]
+    if boy_extras:
+        boy_family_score = round((boy_family_score + sum(boy_extras) / len(boy_extras)) / 2, 1)
 
-    # Verdict card
+    # Combined family score
+    if girl_family_score is not None:
+        combined = round((girl_family_score + boy_family_score) / 2, 1)
+    else:
+        combined = boy_family_score
+
+    st.session_state.inlaw_score = combined
+    st.session_state.triangle_analysis = triangle
+    st.session_state.girl_family_score = girl_family_score
+    st.session_state.boy_family_score = boy_family_score
+
+    # Verdict
+    color = "#6BAF73" if combined >= 70 else ("#E8A846" if combined >= 45 else "#D4577A")
+    verdict = "Strong Family Alignment" if combined >= 70 else ("Moderate Alignment" if combined >= 45 else "Friction Risk")
+
     st.markdown(f"""
     <div class='verdict-card'>
         <div style='color:#8A6B7A; font-size:0.8rem; letter-spacing:3px; text-transform:uppercase; font-weight:600;'>
-            Family Alignment Score
+            Combined Family Score
         </div>
-        <div class='verdict-score' style='color:{result["verdict_color"]};'>{result["inlaw_score"]:.1f}%</div>
-        <div style='color:{result["verdict_color"]}; font-family:"Playfair Display",serif;
-                    font-size:1.25rem; font-weight:600; margin-top:0.3rem;'>
-            {result["verdict"]}
+        <div class='verdict-score' style='color:{color};'>{combined}%</div>
+        <div style='color:{color}; font-family:"Playfair Display",serif; font-size:1.25rem; font-weight:600; margin-top:0.3rem;'>
+            {verdict}
         </div>
         <div style='color:#8A6B7A; margin-top:0.5rem; font-size:0.9rem;'>
-            Based on how well in-law answers align with {name_a}'s hopes.
+            Averaged across {name_a}'s family and {name_b}'s family.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Gauge chart via visualization util
-    try:
-        from utils.visualization import create_triangle_chart
-        fig = create_triangle_chart(result["inlaw_score"], len(result["contradictions"]))
-        st.plotly_chart(fig, use_container_width=True)
-    except Exception:
-        pass
+    # Side-by-side breakdown
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"""
+        <div style='background:white; padding:1.2rem; border-radius:14px; border:1px solid #F8D7DE; text-align:center;'>
+            <div style='color:#8A6B7A; font-size:0.75rem; letter-spacing:2px; text-transform:uppercase; font-weight:600;'>{name_a}'s Family</div>
+            <div style='font-family:"Playfair Display",serif; font-size:2.2rem; color:#5C2A3E; font-weight:700;'>
+                {girl_family_score if girl_family_score is not None else '—'}%
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown(f"""
+        <div style='background:white; padding:1.2rem; border-radius:14px; border:1px solid #F8D7DE; text-align:center;'>
+            <div style='color:#8A6B7A; font-size:0.75rem; letter-spacing:2px; text-transform:uppercase; font-weight:600;'>{name_b}'s Family</div>
+            <div style='font-family:"Playfair Display",serif; font-size:2.2rem; color:#5C2A3E; font-weight:700;'>
+                {boy_family_score}%
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # Contradictions
+    # Contradictions from triangle
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("### Contradiction Analysis")
     st.markdown(
         f"<div style='color:#8A6B7A; font-size:0.95rem;'>"
-        f"Gaps between what <b>{name_b}</b> claims about his family, and what the family <i>actually</i> said.</div>",
+        f"Gaps between what <b>{name_b}</b> claims about his family, and what they actually said.</div>",
         unsafe_allow_html=True,
     )
     st.markdown("<br>", unsafe_allow_html=True)
 
-    if not result["contradictions"]:
-        st.success(f"✨ No contradictions detected. {name_b}'s understanding of his family is accurate.")
+    if not triangle["contradictions"]:
+        st.success(f"✨ No contradictions detected. {name_b}'s view of his family is consistent.")
     else:
-        for c in result["contradictions"]:
+        for c in triangle["contradictions"]:
             sev_cls = c["severity"].lower()
             st.markdown(f"""
             <div class='contra-card contra-{sev_cls}'>
@@ -484,46 +676,45 @@ def render_triangle_tab(inlaw_responses, boy_claims, girl_expectations,
             """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
-        st.metric("High-severity contradictions", result["high_contradictions"])
-    with c2:
-        st.metric("Medium-severity contradictions", result["medium_contradictions"])
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.success("✅ Triangle analysis complete!")
-    c_nav1, c_nav2, c_nav3 = st.columns([1,2,1])
-    with c_nav2:
-        if st.button("📊 Go to Results Dashboard →", type="primary", use_container_width=True):
-            st.switch_page("pages/3_Results_Dashboard.py")
+    st.success("✅ Family analysis complete. Go to the Results Dashboard to see full compatibility.")
 
 
-def load_demo_inlaw(scenarios):
-    """Load demo in-law responses showing clear friction with supportive girl."""
-    # Mother-in-law: traditional
-    mil_demo = {"mil_1": "until_children", "mil_2": "biweekly", "mil_3": "joint_separate",
-                "mil_4": "family_consensus", "mil_5": "mostly_wife", "mil_6": "active_help",
-                "mil_7": "matching", "mil_8": "uncomfortable"}
-    # Father-in-law: mixed traditional
-    fil_demo = {"fil_1": "husband_lead", "fil_2": "optional", "fil_3": "conditional",
-                "fil_4": "consensus", "fil_5": "respectful", "fil_6": "conditional"}
-    # Sister-in-law: wants involvement
-    sil_demo = {"sil_1": "close_friends", "sil_2": "regular", "sil_3": "balanced",
-                "sil_4": "neutral", "sil_5": "consulted"}
-    # Boy claims: he thinks his family is modern
+def load_demo(scenarios):
+    """Auto-fill demo data for both families."""
+    # Boy's family scenarios (existing) — all valid scenario values
+    mil_demo = {"mil_1": "fully_supportive", "mil_2": "whenever", "mil_3": "nuclear",
+                "mil_4": "couple_only", "mil_5": "shared", "mil_6": "supportive",
+                "mil_7": "personal", "mil_8": "supportive"}
+    fil_demo = {"fil_1": "equal", "fil_2": "optional", "fil_3": "supportive",
+                "fil_4": "couple", "fil_5": "personal", "fil_6": "supportive"}
+    sil_demo = {"sil_1": "close_friends", "sil_2": "periodic", "sil_3": "wife_first",
+                "sil_4": "supportive", "sil_5": "hands_off"}
     bc_demo = {"bc_1": "fully_supportive", "bc_2": "whenever", "bc_3": "nuclear",
-               "bc_4": "couple_only", "bc_5": "equal", "bc_6": "personal",
-               "bc_7": "cordial"}
-    # Girl expectations: fully modern
-    ge_demo = {"ge_1": "fully_supportive", "ge_2": "weekly", "ge_3": "nearby",
-               "ge_4": "couple_only", "ge_5": "equal", "ge_6": "personal",
-               "ge_7": "cordial"}
+               "bc_4": "couple_only", "bc_5": "equal", "bc_6": "personal", "bc_7": "close_friends"}
+    ge_demo = {"ge_1": "fully_supportive", "ge_2": "whenever", "ge_3": "nuclear",
+               "ge_4": "couple_only", "ge_5": "equal", "ge_6": "personal", "ge_7": "close_friends"}
 
     st.session_state.inlaw_responses = {**mil_demo, **fil_demo, **sil_demo}
     st.session_state.boy_claims = bc_demo
     st.session_state.girl_expectations = ge_demo
+
+    # Girl's family + boy's brother quick answers
+    st.session_state.girl_family = {
+        "mother": {"conservatism": "balanced", "career_support": "fully_supportive",
+                   "influence": "moderate", "warmth": "warm"},
+        "father": {"conservatism": "balanced", "authority": "advisory",
+                   "financial_support": "independent", "religion": "encouraged"},
+        "brother": {"support": "fully_supportive", "involvement": "occasional", "warmth": "warm"},
+        "sister": {"support": "fully_supportive", "involvement": "occasional", "warmth": "friendly"},
+    }
+    st.session_state.boy_family = {
+        "brother": {"support": "cautious", "involvement": "regular", "warmth": "friendly"}
+    }
+    st.session_state.family_setup = {
+        "girl_has_brother": True, "girl_has_sister": True,
+        "boy_has_brother": True, "boy_has_sister": True,
+    }
     st.session_state.inlaws_complete = True
-    st.switch_page("pages/3_Results_Dashboard.py")
 
 
 main()
