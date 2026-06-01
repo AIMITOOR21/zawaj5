@@ -1,17 +1,47 @@
-"""OpenAI LLM client with automatic fallback to mock/template responses."""
+"""LLM client with multi-provider support (Gemini → OpenAI → Mock fallback).
+
+Priority order:
+1. Google Gemini (free tier — recommended)
+2. OpenAI (paid)
+3. Mock template responses (no key needed — used during demos)
+"""
 
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from config import OPENAI_API_KEY, OPENAI_MODEL
+from config import OPENAI_API_KEY, OPENAI_MODEL, GEMINI_API_KEY, GEMINI_MODEL
 
 
 def get_llm_response(prompt, system_prompt=None, temperature=0.7, max_tokens=1000):
-    """Get LLM response from OpenAI API or mock fallback.
+    """Get LLM response — tries Gemini first, then OpenAI, then mock.
 
     Returns:
         tuple: (response_text, used_real_api: bool)
     """
+    # Try Gemini first (free tier)
+    if GEMINI_API_KEY:
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=GEMINI_API_KEY)
+            model = genai.GenerativeModel(GEMINI_MODEL)
+
+            # Combine system prompt + user prompt for Gemini
+            full_prompt = prompt
+            if system_prompt:
+                full_prompt = f"{system_prompt}\n\n{prompt}"
+
+            response = model.generate_content(
+                full_prompt,
+                generation_config={
+                    "temperature": temperature,
+                    "max_output_tokens": max_tokens,
+                },
+            )
+            return response.text, True
+        except Exception as e:
+            print(f"Gemini API error: {e}, trying OpenAI...")
+
+    # Fall back to OpenAI
     if OPENAI_API_KEY:
         try:
             from openai import OpenAI
@@ -30,6 +60,7 @@ def get_llm_response(prompt, system_prompt=None, temperature=0.7, max_tokens=100
         except Exception as e:
             print(f"OpenAI API error: {e}, falling back to mock")
 
+    # Final fallback: mock responses
     return _mock_response(prompt), False
 
 
